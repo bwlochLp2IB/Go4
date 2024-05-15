@@ -3,9 +3,10 @@
 
 /*
  * Raw event structures for readout of NECTAR setup
- * Jörn Adamczewski-Musch, GSI-CSEE
+ * Joern Adamczewski-Musch, GSI-CSEE
  *
  * v0.1 2 September 2021
+ * v0.9 15 May 2024
  *
  */
 
@@ -14,6 +15,7 @@
 
 #include <vector>
 #include "TString.h"
+
 
 // maximum number of boards to investigate at once
 #define MDPP_MAXBOARDS 10
@@ -64,6 +66,12 @@
  * in the single TNectarRawEvent container. By this it is possible to differ same module ids in composite subevents*/
 #define VMMR_COMPOSITE_ID_OFFSET 100
 
+
+/** number of plain vulom scalers  */
+#define VULOM_NUMSCALERS 32
+
+#define MADC_NUMCHANNELS 32
+#define MADC_RANGE 8192
 
 /******************************************************************
  *

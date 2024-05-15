@@ -2,7 +2,7 @@
 //       The GSI Online Offline Object Oriented (Go4) Project
 //         Experiment Data Processing at CSEE department, GSI
 //-----------------------------------------------------------------------
-// Copyright (C) 2000- GSI Helmholtzzentrum für Schwerionenforschung GmbH
+// Copyright (C) 2000- GSI Helmholtzzentrum fï¿½r Schwerionenforschung GmbH
 //                     Planckstr. 1, 64291 Darmstadt, Germany
 // Contact:            http://go4.gsi.de
 //-----------------------------------------------------------------------
@@ -15,6 +15,7 @@
 // Display readout of MDPP and VMMR data  for Nectar setup
 // V 0.1 09-Sep-2021
 // V 0.2 19-Oct-2021 - added README and small fixes.
+// V 1.1 15-May-2024 - upgraded exisiting code, added unpackers for vulom and madc
 // Joern Adamczewski-Musch, EEL, GSI Darmstadt
 // j.adamczewski@gsi.de
 ---------------------------------------------
@@ -130,6 +131,13 @@ This can be helpful to debug data by printout in analysis terminal. When pressin
 the next event is processed. Please note that #define NECTAR_VERBOSE_PRINT in TNectarRawProc.cxx would switch on
 a verbose printout of all data (recompile/"make" required).
 
+
+____________________________
+2024 NEW switch:
+Bool_t fUseSetup2024; 
+<- if true uses VULOM scaler instead V830 and MADC32 instead of V785
+
+
 Like all Go4 parameters, one can inspect (and change) the current contents of TNectarRawParam in the GUI
 with the parameter editor.
 
@@ -153,6 +161,13 @@ If existing in the working directory, it will override both previous setups.
 To use it, please edit the values assigned to the parameter members in the script 
 (e.g. param0->fVMMR_BoardID[0]=1;). Then just "submit and start" again the analysis from gui, or rerun go4analysis batch job.
 
+___________________
+
+
+
+
+
+
  
 ___________________
 FURTHER INFORMATION
@@ -172,7 +187,7 @@ Please have a look at the Go4 user manual available at
 http://web-docs.gsi.de/~go4/go4V06/manuals/Go4introV6.pdf
 (or in the Go4 GUI Help menu ;-))
 
-___________________________________________________________________JAM 19-10-2021
+___________________________________________________________________JAM 1r5-05-2024
 
 
 

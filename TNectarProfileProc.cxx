@@ -32,7 +32,7 @@
 
 //*********************************************************
 TNectarProfileProc::TNectarProfileProc() :
-  TGo4EventProcessor()
+  TGo4EventProcessor(), fNectarProfileEvent(nullptr)
 {
   TGo4Log::Info("TNectarProfileProc: Create");
 
@@ -42,7 +42,7 @@ TNectarProfileProc::TNectarProfileProc() :
 //
 //*********************************************************
 TNectarProfileProc::TNectarProfileProc(const char* name) :
-  TGo4EventProcessor(name)
+  TGo4EventProcessor(name), fNectarProfileEvent(nullptr)
 {
 
   TGo4Log::Info("TNectarProfileProc: Create1");
@@ -122,7 +122,7 @@ Bool_t TNectarProfileProc::BuildEvent(TGo4EventElement *target)
   //TNectarBB8* DSSD = (TNectarBB8*) target;
   TNectarTelescope* Telescope = (TNectarTelescope*) target;
   TNectarRawEvent* rawEvent = (TNectarRawEvent*) GetInputEvent(); 
-  Bool_t fOutput = kFALSE; //not store the output
+  //Bool_t fOutput = kFALSE; //not store the output
   Double_t ADC1=0,ADC2=0,ADC3=0,ADC4=0,ADC5=0,ADC6=0;
   for (UInt_t i = 0; i < 1; ++i)
   {
@@ -137,7 +137,7 @@ Bool_t TNectarProfileProc::BuildEvent(TGo4EventElement *target)
           
       //For cycle around the strips values to fill new variables 
       //maxvmmrmessages;
-      Int_t ix1=0;
+      //Int_t ix1=0;
       //UInt_t maxvmmrmessages = theslave->NumAdcMessages();
       int Vmmr_strip_C[32] = {15,11,16,14,12,9,13,8,10,5,6,3,7,2,4,1,15,16,10,14,13,12,9,11,4,8,7,6,3,5,1,2};    //Convension Array VMMR channel -> Strips number 
       for(UInt_t a=0;a<64;a++){    

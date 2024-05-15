@@ -49,11 +49,18 @@ protected:
   /** extract payload of  V830 */
   Bool_t UnpackV830();
   
-  /** extract payload of  Vulom TPAT */
+  /** extract payload of TRLOII Vulom TPAT */
   Bool_t UnpackTPAT(Int_t header);
 
-  /** extract payload of  Vulom Scalers */
+  /** extract payload of TRLOII Vulom Scalers */
   Bool_t UnpackVSCA(Int_t header);
+
+  /** extract payload of  plain Vulom Scalers */
+  Bool_t UnpackPlainVSCA();
+
+  /** extract payload of  MADC */
+  Bool_t UnpackMadc(UShort_t triggertype);
+
 
   void FillBeamScalers();
 
@@ -83,7 +90,7 @@ protected:
 
    //add ADC/TDC/Scaler histos for Caen Modules by hand
    TH1 *hRawV785_ADC[3];
-   //TH1 *hRawV775_TDC[32];
+   TH1 *hRawV775_TDC[32];
    //TH1 *hRawV830_Scaler[32];
    //TH1* hRawTRLO_blmu[16];
    //TH1* hRawTRLO_bdt[16];
@@ -119,7 +126,12 @@ protected:
    TH1* h_jet_S2;
    TH1* h_pmt;
    
+   // VULOM scaler raw JAM24:
+
+   TH1* h_vulom_raw;
    
+   // check mesytec ADC contents JAM24
+   TH1 *hRaw_MADC[MADC_NUMCHANNELS];
       
    // TRLO scalers
    TH1* h_Tel_blmu;

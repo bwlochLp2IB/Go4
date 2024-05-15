@@ -43,6 +43,7 @@ void TNectarRawParam::InitBoardMapping()
   fMDPP_ReferenceChannel[0]=0;
   fMDPP_is16Channels[0]=kTRUE; // test setup with one mdpp16
   fSlowMotion=kFALSE;
+  fUseSetup2024=kTRUE;
 
 }
 
@@ -97,6 +98,7 @@ Bool_t TNectarRawParam::UpdateFrom(TGo4Parameter *pp)
 
 
   fSlowMotion=from->fSlowMotion;
+  fUseSetup2024=from->fUseSetup2024;
 
 
   SetConfigBoards();

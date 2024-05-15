@@ -42,7 +42,7 @@ class TNectarProfileProc: public TGo4EventProcessor {
   
 protected:
 
-  TNectarRawParam* fPar1; 
+  //TNectarRawParam* fPar1;
   TNectarProfileEvent* fNectarProfileEvent;
  
   
