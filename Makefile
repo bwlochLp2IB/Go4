@@ -56,6 +56,6 @@ clean-bin::
 
 clean:: clean-bin
 	@$(CleanLib) $(Nectar_OPTIC_LIBNAME) $(Nectar_OPTIC_DIR)
-	@echo "Clean Nectarection ASIC monitoring project"
+	@echo "Clean Nectar project"
 
 include $(GO4SYS)/Makefile.rules

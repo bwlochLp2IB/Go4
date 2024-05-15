@@ -43,6 +43,14 @@
 #define printdeb( args...) ;
 #endif
 
+
+#define NECTAR_SKIP_EVENT( args...)\
+  printf(args);\
+  throw TGo4UserException(1,nullptr);
+
+//GO4_SKIP_EVENT
+
+
 static ULong_t skipped_events = 0;
 
 /* helper macros for BuildEvent to check if payload pointer is still inside delivered region:*/
@@ -52,9 +60,13 @@ static ULong_t skipped_events = 0;
 if((pData - pSubevt->GetDataField()) > lWords ) \
 { \
   printf("############ unexpected end of event for subevent size :0x%x, skip event %ld\n", lWords, skipped_events++);\
-  GO4_SKIP_EVENT \
+  throw TGo4UserException(1,nullptr);\
   continue; \
 }
+
+//  GO4_SKIP_EVENT
+
+
 
 //***********************************************************
 TNectarRawProc::TNectarRawProc() :
@@ -102,6 +114,16 @@ TNectarRawProc::TNectarRawProc(const char* name) :
   //////////////////
   // generic histos
   //////////////////
+
+  for(int ch=0;ch<MADC_NUMCHANNELS;ch++)
+      {
+        obname.Form("Raw/MADC/ADC_Channel_%d", ch);
+        obtitle.Form("mesytec MADC - Channel %d ", ch);
+        hRaw_MADC[ch] = MakeTH1('I',obname.Data(), obtitle.Data(), MADC_RANGE, 0.5, MADC_RANGE+0.5, "ADC value", "counts");
+      }
+
+
+
   //ADC histo definition
   //for(int ch=0;ch<3;ch++)
   //  {
@@ -110,12 +132,12 @@ TNectarRawProc::TNectarRawProc(const char* name) :
   //    hRawV785_ADC[ch] = MakeTH1('I',obname.Data(), obtitle.Data(), adc_range, 0.5, adc_range+0.5, "ADC value", "counts");
   //  }
   ////TDC histo definition
-  //for(int ch=0;ch<32;ch++)
-  //  {
-  //    obname.Form("Raw/TDC/TDC_Channel_%d", ch);
-  //    obtitle.Form("Caen V775 TDC - Channel %d ", ch);
-  //    hRawV775_TDC[ch] = MakeTH1('I',obname.Data(), obtitle.Data(), tdc_range, 0.5, tdc_range+0.5, "TDC value", "counts");
-  //  }
+  for(int ch=0;ch<32;ch++)
+    {
+      obname.Form("Raw/TDC/TDC_Channel_%d", ch);
+      obtitle.Form("Caen V775 TDC - Channel %d ", ch);
+      hRawV775_TDC[ch] = MakeTH1('I',obname.Data(), obtitle.Data(), tdc_range, 0.5, tdc_range+0.5, "TDC value", "counts");
+    }
   ////V830 scaler histo definition
   //for(int ch=0;ch<32;ch++)
   //  {
@@ -191,6 +213,9 @@ TNectarRawProc::TNectarRawProc(const char* name) :
   h_Xray_adt =  MakeTH1('I',"TRLO/Xray_aDT",  "Xray after DT"  , scaler_range, 0, scaler_range, "time", "rate");
   h_Xray_ared = MakeTH1('I',"TRLO/Xray_aRED", "Xray after RED" , scaler_range, 0, scaler_range, "time", "rate");
   
+
+  h_vulom_raw=MakeTH1('I',"Raw/VulomScalerRaw", "Raw content of VULOM" , VULOM_NUMSCALERS, 0, VULOM_NUMSCALERS, "scaler channel", "counts");
+
   InitDisplay(false);    // will init all subdisplays, creating histograms etc.
 
 }
@@ -249,12 +274,12 @@ void TNectarRawProc::InitDisplay(Bool_t replace)
 
 //-----------------------------------------------------------
 // event function
-Bool_t TNectarRawProc::BuildEvent(TGo4EventElement* target)
+Bool_t TNectarRawProc::BuildEvent(TGo4EventElement *target)
 {
 // called by framework from TNectarRawEvent to fill it
   fNectarRawEvent = (TNectarRawEvent*) target;
   fNectarRawEvent->SetValid(kFALSE);    // not store
-  TGo4MbsEvent* source = (TGo4MbsEvent*) GetInputEvent();
+  TGo4MbsEvent *source = (TGo4MbsEvent*) GetInputEvent();
   if (source == 0)
   {
     std::cout << "AnlProc: no input event !" << std::endl;
@@ -267,8 +292,9 @@ Bool_t TNectarRawProc::BuildEvent(TGo4EventElement* target)
   {
     // frontend offset trigger can be one of these, we let it through to unpacking loop
     //cout << "**** TNectarRawProc: Skip trigger event" << endl;
-    GO4_SKIP_EVENT("");
-    //GO4_SKIP_EVENT_MESSAGE("**** TNectarRawProc: Skip event of trigger type %d", triggertype);
+    //GO4_SKIP_EVENT; - compiler warnings recently...
+    //NECTAR_SKIP_EVENT("**** TNectarRawProc: Skip event of trigger type %d\n", triggertype); // works, but floods the terminal
+    throw TGo4UserException(1,nullptr); // this will do it silently JAM24
     //return kFALSE; // this would let the second step execute!
   }
 
@@ -301,11 +327,11 @@ Bool_t TNectarRawProc::BuildEvent(TGo4EventElement* target)
 
     if ((UInt_t) *pData == 0xbad00bad)
     {
-      GO4_SKIP_EVENT_MESSAGE("**** TNectarRawProc: Found BAD mbs event (marked 0x%x), skip it.", (*pData));
+      NECTAR_SKIP_EVENT("**** TNectarRawProc: Found BAD mbs event (marked 0x%x), skip it.\n", (*pData));
     }
 
     // loop over single subevent data:
-    int testiter=0;
+    int testiter = 0;
     while (pData - pSubevt->GetDataField() < lWords)
     {
 
@@ -313,15 +339,17 @@ Bool_t TNectarRawProc::BuildEvent(TGo4EventElement* target)
       // 0xA - VMMR, 0xB - MDPP
       // also module id and firmware version is given
       Int_t header = *pData++;
-      Bool_t isVMMR = ((header >> 28) & 0xF) == 0xA;
-      Bool_t isMDPP = ((header >> 28) & 0xF) == 0xB;
-      Bool_t isV775 = ((header >> 24) & 0xFF) == 0xC0; //caen TDC v775
-      Bool_t isV785 = ((header >> 24) & 0xFF) == 0xD0; //caen ADC v785
-      Bool_t isV830 = ((header >> 24) & 0xFF) == 0xE0; //caen scaler v830
-      Bool_t isTPAT = ((header >> 24) & 0xFF) == 0xcf; //Vulom4 trloII tpat
-      Bool_t isVSCA = ((header >> 24) & 0xFF) == 0xc7; //Vulom4 trloII scalers
-      //Bool_t isTPAT = (header & 0xFF000000)  == 0xCF000000; //Vulom4 trloII tpat
-      Bool_t isVSCALER = (header & 0xFF000000)  == 0xC1000000; //Vulom4 SCALER
+      //Bool_t isVMMR = ((header >> 28) & 0xF) == 0xA;
+      Bool_t isVMMR = ((header >> 24) & 0xFF) == 0xA0;    // mesytec VMMR
+      Bool_t isMADC = ((header >> 24) & 0xFF) == 0xA1;    // mesytec MADC
+      Bool_t isMDPP = ((header >> 24) & 0xFF) == 0xB0;    // mesytec MDPP
+      Bool_t isMTDC = ((header >> 24) & 0xFF) == 0xB1;    // mesytec MTDC
+      Bool_t isV775 = ((header >> 24) & 0xFF) == 0xC0;    //caen TDC v775
+      Bool_t isV785 = ((header >> 24) & 0xFF) == 0xD0;    //caen ADC v785
+      Bool_t isV830 = ((header >> 24) & 0xFF) == 0xE0;    //caen scaler v830
+      Bool_t isTPAT = ((header >> 24) & 0xFF) == 0xcf;    //Vulom4 trloII tpat
+      Bool_t isVSCA = ((header >> 24) & 0xFF) == 0xc7;    //Vulom4 trloII scalers
+      Bool_t isPLAINVSCA = ((header >> 24) & 0xFF) == 0xc1;    //Vulom4 trloII scalers
       //  JAM todo: use following heaeder info somewhere?
       //Int_t module_nr = (header >> 16) & 0xF;
       //Int_t firmware = header & 0xFFFF;
@@ -329,86 +357,89 @@ Bool_t TNectarRawProc::BuildEvent(TGo4EventElement* target)
       //printf("header: %x filter2: %x\n", header, ((header >> 24) & 0xFF));
       
       if (isVMMR)
-	{
-	  if (!UnpackVmmr())
-	    {
-	      GO4_SKIP_EVENT_MESSAGE("Data error: unpacking of VMMR data failed! -  skip event  NEVER COME HERE!"); // Removed following Joern's suggestion on 18 May 22. 
-	      //printf("Data error: header is neither VMMR nor MDPP - skip event!\n");
-	      GO4_SKIP_EVENT("Data");
-	      // at the moment, any error in UnpackMdpp will throw exception, so you should never see this line
-	    }
-	}
+      {
+        if (!UnpackVmmr())
+        {
+          NECTAR_SKIP_EVENT("Data error: unpacking of VMMR data failed! -  skip event  NEVER COME HERE!\n");
+          // at the moment, any error in UnpackMdpp will throw exception, so you should never see this line
+        }
+      }
       else if (isMDPP)
-	{
-	  if (!UnpackMdpp())
-	    {
-	      GO4_SKIP_EVENT_MESSAGE("Data error: unpacking of MDPP data failed! -  skip event  NEVER COME HERE!");  
-	      //printf("Data error: header is neither VMMR nor MDPP - skip event!\n");
-	      GO4_SKIP_EVENT("Data");
-	      // at the moment, any error in UnpackMdpp will throw exception, so you should never see this line
-	    }
-	}
+      {
+        if (!UnpackMdpp())
+        {
+          NECTAR_SKIP_EVENT("Data error: unpacking of MDPP data failed! -  skip event  NEVER COME HERE!\n");
+          // at the moment, any error in UnpackMdpp will throw exception, so you should never see this line
+        }
+      }
       else if (isV775)
-	{
-	  //std::cout << "V775 header found!" << std::endl;
-	  if (!UnpackV775(triggertype))
-	    {
-	      GO4_SKIP_EVENT_MESSAGE("skip event!");
-	      GO4_SKIP_EVENT("Data");
-	    }
-	}
+      {
+        //std::cout << "V775 header found!" << std::endl;
+        if (!UnpackV775(triggertype))
+        {
+          NECTAR_SKIP_EVENT("Data error: unpacking of V775 data failed! -  skip event\n");
+        }
+      }
       else if (isV785)
-	{
-	  //std::cout << "V785 header found!" << std::endl;
-	  if (!UnpackV785(triggertype))
-	    {
-	      GO4_SKIP_EVENT_MESSAGE("skip event!");
-	      GO4_SKIP_EVENT("Data");
-	    }
-	}
+      {
+        //std::cout << "V785 header found!" << std::endl;
+        if (!UnpackV785(triggertype))
+        {
+          NECTAR_SKIP_EVENT("Data error: unpacking of V785 data failed! -  skip event\n");
+        }
+      }
       else if (isV830)
-	{
-	  //std::cout << "V830 header found!" << std::endl;
-	  if (!UnpackV830())
-	    {
-	      GO4_SKIP_EVENT_MESSAGE("skip event!");
-	      GO4_SKIP_EVENT("Data");
-	    }
-	}
+      {
+        //std::cout << "V830 header found!" << std::endl;
+        if (!UnpackV830())
+        {
+          NECTAR_SKIP_EVENT("Data error: unpacking of V830 data failed! -  skip event\n");
+        }
+      }
       else if (isTPAT)
-	{
-	  //std::cout << "TPAT header found!" << std::endl;
-	  if (!UnpackTPAT(header))
-	    {
-	      GO4_SKIP_EVENT_MESSAGE("skip event!");
-	      GO4_SKIP_EVENT("Data");
-	    }
-	}
+      {
+        //std::cout << "TPAT header found!" << std::endl;
+        if (!UnpackTPAT(header))
+        {
+          NECTAR_SKIP_EVENT("Data error: unpacking of TRLLOII TPAT data failed! -  skip event\n");
+        }
+      }
       else if (isVSCA)
-	{
-	  //std::cout << "VScaler header found!" << std::endl;
-	  if (!UnpackVSCA(header))
-	    {
-	      GO4_SKIP_EVENT_MESSAGE("skip event!");
-	      GO4_SKIP_EVENT("Data");
-	    }
-	}
-      else if (isVSCALER)
-	{
-	  //std::cout << "VScaler header found!" << std::endl;
-	  for(int i = 0; i<32; i++)
-	    {
-	      pData++;
-	    }
-	}
+      {
+        //std::cout << "VScaler header found!" << std::endl;
+        if (!UnpackVSCA(header))
+        {
+          NECTAR_SKIP_EVENT("Data error: unpacking of TRLLOII Scaler data failed! -  skip event\n");
+        }
+      }
+      else if (isPLAINVSCA)
+      {
+        //std::cout << "plain VULOM Scaler header found!" << std::endl;
+        if (!UnpackPlainVSCA())
+        {
+          NECTAR_SKIP_EVENT("Data error: unpacking of plain VULUM Scaler data failed! -  skip event\n");
+        }
+      }
+
+      else if (isMADC)
+      {
+         //std::cout << "MADC header found!" << std::endl;
+        if (!UnpackMadc(triggertype))
+        {
+          NECTAR_SKIP_EVENT("Data error: unpacking of MADC data failed! -  skip event\n");
+        }
+      }
+
+      else if (isMTDC)
+      {
+        NECTAR_SKIP_EVENT("Data error: found unexpected MTDC data without implemented unpacker! - skip event!\n");
+      }
+
       else
-	{
-	  GO4_SKIP_EVENT_MESSAGE("Data error: incompatible header - skip event! iter=%d word=0x%x",testiter,header); // Removed and added printf command - 19 May 22
-	  //printf("Data error: header is neither VMMR nor MDPP - skip event!\n");
-	  GO4_SKIP_EVENT("Data");
-        
-	  return kFALSE;
-	}
+      {
+        NECTAR_SKIP_EVENT("Data error: incompatible header - skip event! iter=%d word=0x%x \n", testiter, header);    // Removed and added printf command - 19 May 22
+        return kFALSE;
+      }
 
     }    // while pData - pSubevt->GetDataField() <lWords
 
@@ -435,8 +466,9 @@ Bool_t TNectarRawProc::UnpackMdpp()
 // mdpp header should follow
   Int_t MDPP_head = *pData++;
   Bool_t isHeader = ((MDPP_head >> 28) & 0xF) == 0x4;
-  if (!isHeader)
-    GO4_SKIP_EVENT_MESSAGE("Data error: invalid mdpp header 0x%x -  skip event!", MDPP_head);
+  if (!isHeader){
+   NECTAR_SKIP_EVENT("Data error: invalid mdpp header 0x%x -  skip event!\n", MDPP_head);
+  }
   Int_t sublen = MDPP_head & 0x3FF;    // number of following data words,including EOE
   UInt_t modid = (MDPP_head >> 16) & 0xFF;    //module id
   Int_t resolution = (MDPP_head >> 10) & 0x3F;    //3 bit TDC_resolution 0x604 , 3bit ADC_resolution 0x6046
@@ -626,8 +658,9 @@ Bool_t TNectarRawProc::UnpackVmmr()
 {
   Int_t VMMR_head = *pData++;
   Bool_t isHeader = ((VMMR_head >> 28) & 0xF) == 0x4;
-  if (!isHeader)
-    GO4_SKIP_EVENT_MESSAGE("Data error: invalid vmmr header 0x%x -  skip event!", VMMR_head);
+  if (!isHeader){
+    NECTAR_SKIP_EVENT("Data error: invalid vmmr header 0x%x -  skip event!\n", VMMR_head);
+  }
   Int_t sublen = VMMR_head & 0xFFF;    // number of following data words,including EOE
   Int_t modid = (VMMR_head >> 16) & 0xFF;    //module id
 
@@ -785,19 +818,25 @@ Bool_t TNectarRawProc::UnpackV775(UShort_t triggertype)
 {
   //read header
   Int_t V775_head = *pData++;
-  Bool_t isHeader = ((V775_head >> 28) & 0xF) == 0x4;
-  //if (!isHeader) std::cout << "is header!" << std::endl;
-  //  GO4_SKIP_EVENT_MESSAGE("Data error: invalid vmmr header 0x%x -  skip event!", V775_head);
+  //Bool_t isHeader = ((V775_head >> 28) & 0xF) == 0x4;
+
+
 
   uint32_t count =(uint32_t)(V775_head & 0x3f00) >> 8;
+#ifdef NECTAR_VERBOSE_PRINT
   uint32_t crate =(uint32_t)(V775_head & 0xff0000) >> 16;
   uint32_t geom  =(uint32_t)(V775_head & 0xf8000000) >> 27;
+#endif
   
-  //std::cout << "count: " << count << " crate: " << crate << " geom: " << geom << std::endl;
+//  std::cout << "UnpackV775: count: " << count << " crate: " << crate << " geom: " << geom << std::endl;
+  printdeb("UnpackV775: count:%d crate %d geom:%d \n", count, crate, geom)
 
-  uint32_t ch_val, channel, ch_geom, ch_overflow, ch_underflow, ch_valid;
+  uint32_t ch_val, channel;
+#ifdef NECTAR_VERBOSE_PRINT
+  uint32_t ch_valid; //ch_geom, ch_overflow, ch_underflow;
+#endif
   uint32_t word;
-  Int_t counter = 0;
+  uint32_t counter = 0;
   // loop over following data words:
   while (counter < count)
     {
@@ -805,87 +844,121 @@ Bool_t TNectarRawProc::UnpackV775(UShort_t triggertype)
       //      std::cout << "Data: " << pData << std::endl;
       word = *pData++;
       ch_val       = (uint32_t)(word & 0x00000fff);
-      ch_overflow  = (uint32_t)(word & 0x1000)       >> 12;
-      ch_underflow = (uint32_t)(word & 0x2000)       >> 13;
+#ifdef NECTAR_VERBOSE_PRINT
+      //ch_overflow  = (uint32_t)(word & 0x1000)       >> 12;
+      //ch_underflow = (uint32_t)(word & 0x2000)       >> 13;
+
       ch_valid     = (uint32_t)(word & 0x4000)       >> 14;
+#endif
       channel      = (uint32_t)(word & 0x1f0000)     >> 16;
-      ch_geom      = (uint32_t)(word & 0xf8000000)   >> 27;
-      //std::cout << "ch: " << channel << " val: " << ch_val << " ok: " << ch_valid << std::endl;
-      //hRawV775_TDC[channel]->Fill(ch_val);
+      //ch_geom      = (uint32_t)(word & 0xf8000000)   >> 27;
+//      std::cout << "ch: " << channel << " val: " << ch_val << " ok: " << ch_valid << std::endl;
+      printdeb("775 ch:%d, value:0x%x, valid:%d\n", channel, ch_val, ch_valid)
+      hRawV775_TDC[channel]->Fill(ch_val);
       switch (channel)
-      	{
-      	case 0:
-      	  if( triggertype == 1 ) h_t_Xray[1]->Fill(ch_val);
-	  else h_t_Xray_OFF[1]->Fill(ch_val);
-      	case 1:
-      	  if( triggertype == 1 ) h_t_Xray[2]->Fill(ch_val);
-	  else h_t_Xray_OFF[2]->Fill(ch_val);
+      {
+        case 0:
+          if (triggertype == 1)
+            h_t_Xray[1]->Fill(ch_val);
+          else
+            h_t_Xray_OFF[1]->Fill(ch_val);
+          break;
+        case 1:
+          if (triggertype == 1)
+            h_t_Xray[2]->Fill(ch_val);
+          else
+            h_t_Xray_OFF[2]->Fill(ch_val);
+          break;
+
+        default:
+          printdeb("Warning: found wrong channel number %d in V775!\n", channel);
+          break;
+
       }
     }
   
-  *pData++; //skip EOB
-  
+  pData++; //skip EOB
   return kTRUE;
 }
 
 Bool_t TNectarRawProc::UnpackV785(UShort_t triggertype)
 {
-  Int_t counter = 0;
+  uint32_t counter = 0;
   //read header
   Int_t V785_head = *pData++;
 
-  uint32_t count =(uint32_t)(V785_head & 0x3f00) >> 8;
-  uint32_t crate =(uint32_t)(V785_head & 0xff0000) >> 16;
-  uint32_t geom  =(uint32_t)(V785_head & 0xf8000000) >> 27;
+  uint32_t count = (uint32_t) (V785_head & 0x3f00) >> 8;
+  //uint32_t crate = (uint32_t) (V785_head & 0xff0000) >> 16;
+  //uint32_t geom = (uint32_t) (V785_head & 0xf8000000) >> 27;
 
   //std::cout << "count: " << count << " crate: " << crate << " geom: " << geom << std::endl;
 
-  uint32_t ch_val, channel, ch_geom, ch_overflow, ch_underflow, ch_valid;
+  uint32_t ch_val, channel;
+  //uint32_t ch_geom, ch_overflow, ch_underflow, ch_valid;
   uint32_t word;
   // loop over following data words:  
   while (counter < count)
+  {
+    counter++;
+    //      std::cout << "Data: " << pData << std::endl;
+    word = *pData++;
+    ch_val = (uint32_t) (word & 0x00000fff);
+    //ch_overflow = (uint32_t) (word & 0x1000) >> 12;
+    //ch_underflow = (uint32_t) (word & 0x2000) >> 13;
+    //ch_valid = (uint32_t) (word & 0x4000) >> 14;
+    channel = (uint32_t) (word & 0x1f0000) >> 16;
+    //ch_geom = (uint32_t) (word & 0xf8000000) >> 27;
+    //std::cout << "ch: " << channel << " val: " << ch_val << " ok: " << ch_valid << std::endl;
+    //hRawV785_ADC[channel]->Fill(ch_val);
+
+    if (!fPar->fUseSetup2024)
     {
-      counter++;
-      //      std::cout << "Data: " << pData << std::endl;
-      word = *pData++;
-      ch_val       = (uint32_t)(word & 0x00000fff);
-      ch_overflow  = (uint32_t)(word & 0x1000)       >> 12;
-      ch_underflow = (uint32_t)(word & 0x2000)       >> 13;
-      ch_valid     = (uint32_t)(word & 0x4000)       >> 14;
-      channel      = (uint32_t)(word & 0x1f0000)     >> 16;
-      ch_geom      = (uint32_t)(word & 0xf8000000)   >> 27;
-      //std::cout << "ch: " << channel << " val: " << ch_val << " ok: " << ch_valid << std::endl;
-      //hRawV785_ADC[channel]->Fill(ch_val);
       switch (channel)
-	{
-	case 0:
-	  hRawV785_ADC[1]->Fill(ch_val);
-	  if( triggertype == 1 ) h_E_Xray[1]->Fill(ch_val*CAL_XRAY90_A+CAL_XRAY90_B);
-	  else h_E_Xray_OFF[1]->Fill(ch_val*CAL_XRAY90_A+CAL_XRAY90_B);
-	case 1:
-	  hRawV785_ADC[2]->Fill(ch_val);
-	  if( triggertype == 1 )  h_E_Xray[2]->Fill(ch_val*CAL_XRAY145_A+CAL_XRAY145_B);
-	  else h_E_Xray_OFF[2]->Fill(ch_val*CAL_XRAY145_A+CAL_XRAY145_B);
-	}
+      {
+        case 0:
+          hRawV785_ADC[1]->Fill(ch_val);
+          if (triggertype == 1)
+            h_E_Xray[1]->Fill(ch_val * CAL_XRAY90_A + CAL_XRAY90_B);
+          else
+            h_E_Xray_OFF[1]->Fill(ch_val * CAL_XRAY90_A + CAL_XRAY90_B);
+          break;
+        case 1:
+          hRawV785_ADC[2]->Fill(ch_val);
+          if (triggertype == 1)
+            h_E_Xray[2]->Fill(ch_val * CAL_XRAY145_A + CAL_XRAY145_B);
+          else
+            h_E_Xray_OFF[2]->Fill(ch_val * CAL_XRAY145_A + CAL_XRAY145_B);
+          break;
+        default:
+          //printf("Warning: found wrong channel number %d in V785!\n",channel);
+          break;
+      }
     }
+    else
+    {
+      //printf("Warning: found V785 data although new setup is enabled! Please check fUseSetup2024 in parameter\n");
+      GO4_STOP_ANALYSIS_MESSAGE("Stopped: found V785 data although new setup is enabled! Please check fUseSetup2024 in parameter\n");
+    }
+
+  }
   
-  *pData++; //skip EOB
+  pData++;    //skip EOB
   
   return kTRUE;
 }
 
 Bool_t TNectarRawProc::UnpackV830()
 {
-  Int_t counter = 0;
+  uint32_t counter = 0;
   //read header
   Int_t V830_head = *pData++;
 
   uint32_t count =(uint32_t)(V830_head & 0xfc0000) >> 18;
-  uint32_t geom  =(uint32_t)(V830_head & 0xf8000000) >> 27;
+  //uint32_t geom  =(uint32_t)(V830_head & 0xf8000000) >> 27;
 
   //std::cout << "count: " << count << " geom: " << geom << std::endl;
 
-  uint32_t ch_val, channel, word, ch_diff;
+  uint32_t ch_val, channel, word; //, ch_diff;
   
   // loop over following data words:
   while (counter < count)
@@ -901,11 +974,19 @@ Bool_t TNectarRawProc::UnpackV830()
       //32 bit mode
       ch_val       = (uint32_t)(word & 0xffffffff);
       channel      = counter;
+      if(!fPar->fUseSetup2024)
+      {
+        V830_diff[channel] = ch_val - V830_old[channel];
 
-      V830_diff[channel] = ch_val - V830_old[channel];
-
-      //std::cout << "ch: " << channel << " diff: " << V830_diff[channel] << std::endl;
-      V830_old[channel] = ch_val;
+        //std::cout << "ch: " << channel << " diff: " << V830_diff[channel] << std::endl;
+        V830_old[channel] = ch_val;
+      }
+      else
+      {
+          //printf("Warning: found V830 data although new setup is enabled! Please check fUseSetup2024 in parameter\n");
+          GO4_STOP_ANALYSIS_MESSAGE("Stopped: found V830 data although new setup is enabled! Please check fUseSetup2024 in parameter\n");
+      }
+      NECTAR_EVENT_CHECK_PDATA
     }
 
   return kTRUE;
@@ -916,8 +997,8 @@ Bool_t TNectarRawProc::UnpackTPAT(Int_t header)
 {
   uint32_t counter = 0;
   uint32_t count =(uint32_t)(header   & 0xfff);
-  uint32_t ev_num  =(uint32_t)(header & 0xfff000) >> 12;
-  uint32_t id  =(uint32_t)(header &     0xff000000) >> 24;
+  //uint32_t ev_num  =(uint32_t)(header & 0xfff000) >> 12;
+  //uint32_t id  =(uint32_t)(header &     0xff000000) >> 24;
 
   //std::cout << "count: " << count << " ev: " << ev_num << " id " << id << std::endl;
   
@@ -952,6 +1033,7 @@ Bool_t TNectarRawProc::UnpackTPAT(Int_t header)
       //std::cout << "----- tpat: " << tpat << " trig: " << trig << " -----" << std::endl;
       hRawTRLO_tpat->Fill(tpat);
       hRawTRLO_trigger->Fill(trig);
+      NECTAR_EVENT_CHECK_PDATA
     }
   return kTRUE;
 }
@@ -964,7 +1046,7 @@ Bool_t TNectarRawProc::UnpackVSCA(Int_t header)
   uint32_t b_lmu_mux  = (uint32_t)(header & 0x7c0) >> 6;
   uint32_t b_lmu_aux  = (uint32_t)(header & 0xf800) >> 11;
   uint32_t a_lmu  = (uint32_t)(header & 0xff0000) >> 16;
-  uint32_t id  =(uint32_t)(header &     0xff000000) >> 24;
+  //uint32_t id  =(uint32_t)(header &     0xff000000) >> 24;
 
   //std::cout << "b_lmu: " << b_lmu << " mux: " << b_lmu_mux << " aux: " << b_lmu_aux << " a_lmu: " << a_lmu << " id: " << id << std::endl;
   
@@ -977,43 +1059,56 @@ Bool_t TNectarRawProc::UnpackVSCA(Int_t header)
 
       d_blmu = before_lmu[counter]-blmu_old[counter];
       if ( blmu_old[counter] > 0 && d_blmu > 0)
-	{
-	  //printf( "counter: %d\n", counter);
-	  switch (counter)
-	    {
-	    case 1:
-	      h_Tel_blmu->Fill(SCAtime, d_blmu);
-	    case 2:
-	      h_HRes_blmu->Fill(SCAtime, d_blmu);
-	    case 3:
-	      h_Xray1_blmu->Fill(SCAtime, d_blmu);
-	    case 4:
-	      h_Xray2_blmu->Fill(SCAtime, d_blmu);
-	    case 5:
-	      h_Xray3_blmu->Fill(SCAtime, d_blmu);
-	    }
-	}
+        {
+          //printf( "counter: %d\n", counter);
+          switch (counter)
+            {
+            case 1:
+              h_Tel_blmu->Fill(SCAtime, d_blmu);
+              break;
+            case 2:
+              h_HRes_blmu->Fill(SCAtime, d_blmu);
+              break;
+            case 3:
+              h_Xray1_blmu->Fill(SCAtime, d_blmu);
+              break;
+            case 4:
+              h_Xray2_blmu->Fill(SCAtime, d_blmu);
+              break;
+            case 5:
+              h_Xray3_blmu->Fill(SCAtime, d_blmu);
+              break;
+            default:
+              break;
+            }
+        }
       //printf("blmu_Data ch %d: %x\n",counter, before_lmu[counter]);
       blmu_old[counter] = before_lmu[counter];
+      NECTAR_EVENT_CHECK_PDATA
     }
   counter = 0;
-
-  uint32_t before_lmu_mux[b_lmu_mux];
+  // JAM 5-24: just skip the non used trloii scalers, suppress warnings
+  //uint32_t before_lmu_mux[b_lmu_mux];
   while (counter < b_lmu_mux)
     {
       counter++;
-      before_lmu_mux[counter] = *pData++;
+      //before_lmu_mux[counter] = *pData++;
+      pData++;
       //printf("mux_Data ch %d: %x\n", counter, before_lmu_mux[counter] );
+      NECTAR_EVENT_CHECK_PDATA
     }
   counter = 0;
-
-  uint32_t before_lmu_aux[b_lmu_aux];
+  // JAM 5-24: just skip the non used trloii scalers, suppress warnings
+  //uint32_t before_lmu_aux[b_lmu_aux];
   while (counter < b_lmu_aux)
     {
       counter++;
-      before_lmu_aux[counter] = *pData++;
+      //before_lmu_aux[counter] = *pData++;
+      pData++;
       //printf("aux_Data ch %d: %x\n",counter,before_lmu_aux[counter] );
+      NECTAR_EVENT_CHECK_PDATA
     }
+
   counter = 0;
 
   uint32_t before_dt[a_lmu];
@@ -1034,40 +1129,197 @@ Bool_t TNectarRawProc::UnpackVSCA(Int_t header)
       d_adt = after_dt[counter]-adt_old[counter];
       d_ared = after_red[counter]-ared_old[counter];
       if ( bdt_old[counter] != 0 && d_bdt > 0)
-	{
-	  //printf( "counter: %d\n", counter);
-	  switch (counter)
-	    {
-	    case 1:
-	    case 4:
-	      //printf( "filling Tel");
-	      h_Tel_bdt->Fill(SCAtime, d_bdt);
-	      h_Tel_adt->Fill(SCAtime, d_adt);
-	      h_Tel_ared->Fill(SCAtime, d_ared);
-	    case 2:
-	    case 5:
-	      //printf( "filling HRes");
-	      h_HRes_bdt->Fill(SCAtime, d_bdt);
-	      h_HRes_adt->Fill(SCAtime, d_adt);
-	      h_HRes_ared->Fill(SCAtime, d_ared);
-	    case 3:
-	    case 6:
-	      //printf( "filling Xray");
-	      h_Xray_bdt->Fill(SCAtime, d_bdt);
-	      h_Xray_adt->Fill(SCAtime, d_adt);
-	      h_Xray_ared->Fill(SCAtime, d_ared);
-	    }
+        {
+          //printf( "counter: %d\n", counter);
+          switch (counter)
+            {
+            case 1:
+            case 4:
+              //printf( "filling Tel");
+              h_Tel_bdt->Fill(SCAtime, d_bdt);
+              h_Tel_adt->Fill(SCAtime, d_adt);
+              h_Tel_ared->Fill(SCAtime, d_ared);
+              break;
+            case 2:
+            case 5:
+              //printf( "filling HRes");
+              h_HRes_bdt->Fill(SCAtime, d_bdt);
+              h_HRes_adt->Fill(SCAtime, d_adt);
+              h_HRes_ared->Fill(SCAtime, d_ared);
+              break;
+            case 3:
+            case 6:
+              //printf( "filling Xray");
+              h_Xray_bdt->Fill(SCAtime, d_bdt);
+              h_Xray_adt->Fill(SCAtime, d_adt);
+              h_Xray_ared->Fill(SCAtime, d_ared);
+              break;
+            }
 
-	}
+        }
       //printf("ch %d BDT: %x\t ADT: %x\t ARED: %x\n",counter, before_dt[counter], after_dt[counter], after_red[counter] );
 	bdt_old[counter] = before_dt[counter];
 	adt_old[counter] = after_dt[counter];
 	ared_old[counter] = after_red[counter];
-	
+	NECTAR_EVENT_CHECK_PDATA
     }
 	
   return kTRUE;
 }
+
+Bool_t TNectarRawProc::UnpackPlainVSCA()
+{
+  for (Int_t channel = 0; channel < VULOM_NUMSCALERS; ++channel)
+  {
+    uint32_t ch_val = (uint32_t) ((*pData++) & 0xFFFFFFFF);
+    h_vulom_raw->SetBinContent(channel+1,ch_val);
+
+    if (fPar->fUseSetup2024)
+    {
+      V830_diff[channel] = ch_val - V830_old[channel];
+      //std::cout << "UnpackPlainVSCA: ch: " << channel << " diff: " << V830_diff[channel] <<", value: "<< ch_val << std::endl;
+      printdeb("UnpackPlainVSCA: ch: %d diff:%d , value:%d\n",channel, V830_diff[channel], ch_val);
+      V830_old[channel] = ch_val;
+    }
+    else
+    {
+      //printf("Warning: found VULOM data although old setup is enabled! Please check fUseSetup2024 in parameter\n");
+      GO4_STOP_ANALYSIS_MESSAGE("Stopped: found VULOM data although old setup is enabled! Please check fUseSetup2024 in parameter\n");
+    }
+    NECTAR_EVENT_CHECK_PDATA
+  }      // for
+
+  return kTRUE;
+}
+
+Bool_t TNectarRawProc::UnpackMadc(UShort_t triggertype)
+{
+
+  uint32_t counter = 0;
+  uint32_t ch_val, channel, ch_overflow;    //data
+  uint32_t sig = (uint32_t) (*pData & 0xC0000000) >> 30;
+  uint32_t sub = (uint32_t) (*pData & 0x3F000000) >> 24;
+#ifdef NECTAR_VERBOSE_PRINT
+  uint32_t geom       = (uint32_t)(*pData & 0x00FF0000) >> 16;
+  //uint32_t format   = (uint32_t)(*pData & 0x00008000) >> 15;
+  uint32_t adc_resol  = (uint32_t)(*pData & 0x00007C00) >> 10;
+#endif
+  uint32_t word_num = (uint32_t) (*pData & 0x000003FF);    // this gives the # of following words
+
+  //check module header
+  if ((sig == 1) && (sub == 0))
+  {
+    printdeb("header MADC: 0x%x\n", *pData);
+    printdeb("adc=%d; geom=%d; word_num=%d\n", adc_resol, geom, word_num);
+  }
+  else
+  {
+    NECTAR_SKIP_EVENT("expected madc32 header not found: sig=0x%x sub=0x%x ! Skipping event!\n", sig, sub);
+    //return kFALSE;
+  }
+
+  pData++;
+
+  while (counter < word_num)
+  {
+    sig = (uint32_t) (*pData & 0xC0000000) >> 30;
+    sub = (uint32_t) (*pData & 0x3FE00000) >> 21;
+
+    printdeb("MADC32: sig=%d; sub=%d\n", sig, sub);
+
+    //dummy - data - ts
+    if (sig == 0)
+    {
+
+      if (sub == 0)    //dummy -> skip
+      {
+        pData++;
+      }
+      else if (sub == 32)    //data -> read
+      {
+        ch_val = (uint32_t) (*pData & 0x00001FFF);    //channel value
+        ch_overflow = (uint32_t) (*pData & 0x00004000) >> 14;
+        channel = (uint32_t) (*pData & 0x001F0000) >> 16;
+
+        printdeb("MADC32: channel=%d; ch_val=%d; overflow=%d\n", channel, ch_val, ch_overflow);
+
+        if (ch_overflow)
+            ch_val = MADC_RANGE;// -1;    //fill overflow bin if channel in overlow
+          hRaw_MADC[channel]->Fill(ch_val);
+        //////////////////
+        if (fPar->fUseSetup2024)
+           {
+             switch (channel)
+             {
+               case 0:
+                 hRawV785_ADC[1]->Fill(ch_val);
+                 if (triggertype == 1)
+                   h_E_Xray[1]->Fill(ch_val * CAL_XRAY90_A + CAL_XRAY90_B);
+                 else
+                   h_E_Xray_OFF[1]->Fill(ch_val * CAL_XRAY90_A + CAL_XRAY90_B);
+                 break;
+               case 1:
+                 hRawV785_ADC[2]->Fill(ch_val);
+                 if (triggertype == 1)
+                   h_E_Xray[2]->Fill(ch_val * CAL_XRAY145_A + CAL_XRAY145_B);
+                 else
+                   h_E_Xray_OFF[2]->Fill(ch_val * CAL_XRAY145_A + CAL_XRAY145_B);
+                 break;
+               default:
+                 //printf("Warning: found wrong channel number %d in MADC!\n",channel);
+                 break;
+             }
+           }
+           else
+           {
+             //printf("Warning: found MADC data although old setup is enabled! Please check fUseSetup2024 in parameter\n");
+             GO4_STOP_ANALYSIS_MESSAGE("Stopped: found MADC data although old setup is enabled! Please check fUseSetup2024 in parameter.\n");
+           }
+
+
+
+        /////////////////
+
+        pData++;
+      }
+      else if (sub == 36)    // ext_ts -> read
+      {
+        //_ext_ts       = (uint32_t)(*(*p_data) & 0x0000FFFF); //timestamp
+        //ext_ts = _ext_ts;
+        pData++;
+      }
+      else
+      {
+        NECTAR_SKIP_EVENT("MADC32: sub signature of word not identified -> skipping event");
+        //return kFALSE;
+      }
+    }
+    else if (sig == 3)    //event counter
+    {
+      //evt_counter = (uint32_t) (*pData++ & 0x3FFFFFFF);
+      pData++;
+
+    }
+    else
+    {
+      NECTAR_SKIP_EVENT("MADC32: signature of word not identified -> skipping event");
+      //return kFALSE;
+    }
+
+    counter++;
+    NECTAR_EVENT_CHECK_PDATA
+  }// while
+
+
+
+
+
+
+
+   return kTRUE;
+ }
+
+
 
 void TNectarRawProc::ScalerReset(TH1* histo)
 {
@@ -1097,6 +1349,8 @@ void TNectarRawProc::ResetScalers()
   h_jet_S2->Reset();
   h_pmt->Reset();
   
+  h_vulom_raw->Reset();
+
 }
 
 void TNectarRawProc::FillBeamScalers()

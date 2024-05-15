@@ -192,6 +192,8 @@ protected:
   ClassDef(TVmmrDisplay,1)
 };
 
+/* JAM2024: this class is currently not used*/
+#if 0
 class TCommonHisto
 {
 public:
@@ -239,6 +241,8 @@ public:
 
    //ClassDef(TCommonHisto,1);
 };
+#endif
+/** end unused class*/
 
 #endif //TNectarDISPLAY_H
 

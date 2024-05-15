@@ -311,6 +311,9 @@ void TVmmrSlaveDisplay::ResetDisplay()
 
 //***********************************************************
 
+
+/** JAM5-2024: suppress unused histogram class for the moment */
+#if 0
 void TCommonHisto::InitHisto()
 {
 //  Int_t adc_range = 8192;
@@ -327,4 +330,4 @@ void TCommonHisto::InitHisto()
 //    }
 //  
 }
-
+#endif

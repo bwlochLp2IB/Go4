@@ -13,7 +13,10 @@ void set_NectarRawParam()
       return;
    }
 
-   TGo4Log::Info("Set parameter NectarRawParam as saved at Mon Sep 13 14:55:46 2021");
+   TGo4Log::Info("Set parameter NectarRawParam from script set_NectarRawParam.C");
+
+
+   param0->fUseSetup2024=kTRUE; // JAM 5-2024: set this to kFALSE for processing old data with V830 and V785 modules
 
    param0->fVMMR_BoardID[0] =  0; // this is board ID send by frontends
    param0->fVMMR_BoardID[1] = 1; // -1 means no board is expected

@@ -82,8 +82,8 @@ Bool_t TNectarMonitoringProc::BuildEvent(TGo4EventElement *target)
     TNectarRawEvent* rawEvent = (TNectarRawEvent*) GetInputEvent(); 
     
     //* Variable initialization *//
-    Bool_t fOutput = kFALSE; //not store the output
-    Int_t counter = 0;
+   // Bool_t fOutput = kFALSE; //not store the output
+    //Int_t counter = 0;
     Telescope->DT_telescope=0;
     
     for(Int_t i=0;i<17;i++)
@@ -169,7 +169,7 @@ Bool_t TNectarMonitoringProc::BuildEvent(TGo4EventElement *target)
 //* Telescope filling function *//
 void TNectarMonitoringProc:: Filling_Ev_Telescope(TVmmrBoard* theVmmr, TNectarDetectors* Telescope)
 {
-    Double_t ADC1=0,ADC2=0,ADC3=0,ADC4=0,ADC5=0,ADC6=0,counter=0;
+    Double_t ADC1=0,ADC2=0,ADC3=0,ADC4=0,ADC5=0,ADC6=0; //,counter=0;
     
     for (int slid=0; slid<VMMR_CHAINS; ++slid)
     {
@@ -464,7 +464,7 @@ void TNectarMonitoringProc:: Filling_Ev_BB29(TVmmrBoard* theVmmr, TNectarDetecto
 //* Online analysis target on function *//
     void TNectarMonitoringProc:: Online_Analysis_Target_on(TNectarDetectors* Telescope){
     Int_t S_E_id=0, S_E_id_V=0  /*(modified to test mapping BB29)*/, S_E_id_H=0, nV=0, nV1=0, nV2=0, nH=0, Total_ch=0, strip_BB29_V=0, strip_BB29_H=0,  S_E_id_V_HR=0, S_E_id_H_HR=0;
-    Double_t Total_E=0, E_1=0, E_2=0, E_7=0, E_8=0, E_9=0, E_10=0, E_BB8_Mult=0;
+    Double_t Total_E=0, E_1=0, E_2=0, E_7=0, E_8=0, E_9=0, E_10=0; //, E_BB8_Mult=0;
     Int_t mult_BB8_V=0, mult_BB8_H=0;
     Int_t DT_m = Telescope->DT_telescope + fPar->DT_min;
     Int_t DT_M = Telescope->DT_telescope + fPar->DT_max;  
@@ -1072,7 +1072,7 @@ void TNectarMonitoringProc:: Update_Histograms_Target_on(TNectarDetectors* Teles
 void TNectarMonitoringProc:: Update_Histograms_Target_off(TNectarDetectors* Telescope)
 {
   
-  Int_t Adc=0;
+  //Int_t Adc=0;
   //Fill the vertical Strips Histograms::  BB8
   for(Int_t i=0; i<16; i++){
     if(Telescope->BB8_HStrip[i+1]>0)  Histo->BB8_ADC_V_strip_TO->Fill(i+1,Telescope->BB8_VStrip[i+1]);
@@ -1101,7 +1101,7 @@ void TNectarMonitoringProc:: Update_Histograms_Target_off(TNectarDetectors* Tele
   //Histograms BB29 
   //*******************
   
-  Adc=0;
+  //Adc=0;
   //Fill the vertical Strips Histograms::  B29
   for(Int_t i=0; i<128; i++){
     if(Telescope->BB29_VStrip[i+1]>0)  Histo->BB29_ADC_V_strip_TO->Fill(i+1,Telescope->BB29_VStrip[i+1]);

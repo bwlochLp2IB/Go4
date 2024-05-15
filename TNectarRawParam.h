@@ -45,6 +45,7 @@ class TNectarRawParam : public TGo4Parameter {
 
       Double_t E_Pb, M_Pb, M_H, tfix, Beam_shift;
       Double_t A_Pos[17];
+      Bool_t fUseSetup2024; // if true, use modules (VULOM, MADC) instead old setup ((v830,v785) )
       
    private:
 
