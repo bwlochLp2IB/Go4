@@ -625,6 +625,12 @@ void TNectarMonitoringProc:: Filling_Ev_BB29(TVmmrBoard* theVmmr, TNectarDetecto
   Histo->BB29_HR_V118_V119->Fill(Telescope->BB29_VStrip[118],Telescope->BB29_VStrip[119]);
   Histo->BB29_HR_V119_V120->Fill(Telescope->BB29_VStrip[119],Telescope->BB29_VStrip[120]);
   
+
+  Histo->DTtel_ADCHR_V1->Fill(Telescope->DT_BB29_V,Telescope->BB8_VStrip[1]);
+  Histo->DTtel_ADCHR_V60->Fill(Telescope->DT_BB29_V,Telescope->BB8_VStrip[8]);
+  Histo->DTtel_ADCHR_H1->Fill(Telescope->DT_BB29_V,Telescope->BB8_HStrip[1]);
+  Histo->DTtel_ADCHR_H20->Fill(Telescope->DT_BB29_V,Telescope->BB8_HStrip[8]);  
+  
     for(Int_t i=1; i<129; i++){
     //Total_ch=0;
     //Total_E=0;

@@ -76,7 +76,7 @@ void TNectarHistograms::InitHistograms(Bool_t replace)
     {
         obname.Form("Monitoring/Target_on/Detectors/BB8/DeltaT_vs_V/BB8_DT_E_V_%d",i+1);
         obtitle.Form("BB8_DT_E_V_%d",i+1);  
-        BB8_DT_E_V[i]= MakeTH2('I', obname.Data(), obtitle.Data(),100, 0,100, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"Telescope DT (ch)", "ADC energy Vstrip (ch)"); 
+        BB8_DT_E_V[i]= MakeTH2('I', obname.Data(), obtitle.Data(),300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"Telescope DT (ch)", "ADC energy Vstrip (ch)"); 
     }
 
     // ADC value vertical strips vs any horizontal strip
@@ -207,53 +207,53 @@ void TNectarHistograms::InitHistograms(Bool_t replace)
     
     obname.Form("Monitoring/Target_on/Detectors/HR/DeltaT_vs_V/HR_DT_E_V1");
     obtitle.Form("HR_DT_E_V1");     
-    BB29_HR_DT_V1= MakeTH2('I', obname.Data(), obtitle.Data(),100, 0,100, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V1");
+    BB29_HR_DT_V1= MakeTH2('I', obname.Data(), obtitle.Data(),300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V1");
     
     obname.Form("Monitoring/Target_on/Detectors/HR/DeltaT_vs_V/HR_DT_E_V2");
     obtitle.Form("HR_DT_E_V2");     
-    BB29_HR_DT_V2= MakeTH2('I', obname.Data(), obtitle.Data(), 100, 0,100, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V2");
+    BB29_HR_DT_V2= MakeTH2('I', obname.Data(), obtitle.Data(), 300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V2");
 
     obname.Form("Monitoring/Target_on/Detectors/HR/DeltaT_vs_V/HR_DT_E_V60");
     obtitle.Form("HR_DT_E_V60");     
-    BB29_HR_DT_V60= MakeTH2('I', obname.Data(), obtitle.Data(), 100, 0,100, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V60");
+    BB29_HR_DT_V60= MakeTH2('I', obname.Data(), obtitle.Data(), 300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V60");
     
     obname.Form("Monitoring/Target_on/Detectors/HR/DeltaT_vs_V/HR_DT_E_V61");
     obtitle.Form("HR_DT_E_V61");     
-    BB29_HR_DT_V61= MakeTH2('I', obname.Data(), obtitle.Data(), 100, 0,100, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V61");
+    BB29_HR_DT_V61= MakeTH2('I', obname.Data(), obtitle.Data(),300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V61");
 
     obname.Form("Monitoring/Target_on/Detectors/HR/DeltaT_vs_V/HR_DT_E_V119");
     obtitle.Form("HR_DT_E_V119");     
-    BB29_HR_DT_V119= MakeTH2('I', obname.Data(), obtitle.Data(), 100, 0,100, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V119");
+    BB29_HR_DT_V119= MakeTH2('I', obname.Data(), obtitle.Data(), 300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V119");
     
     obname.Form("Monitoring/Target_on/Detectors/HR/DeltaT_vs_V/HR_DT_E_V120");
     obtitle.Form("HR_DT_E_V120");     
-    BB29_HR_DT_V120= MakeTH2('I', obname.Data(), obtitle.Data(), 100, 0,100, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V120");
+    BB29_HR_DT_V120= MakeTH2('I', obname.Data(), obtitle.Data(),300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V120");
     
     // DT vs horizontal ADC
     
     obname.Form("Monitoring/Target_on/Detectors/HR/DeltaT_vs_V/HR_DT_E_H1");
     obtitle.Form("HR_DT_E_H1");     
-    BB29_HR_DT_H1= MakeTH2('I', obname.Data(), obtitle.Data(),100, 0,100, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V1");
+    BB29_HR_DT_H1= MakeTH2('I', obname.Data(), obtitle.Data(),300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V1");
     
     obname.Form("Monitoring/Target_on/Detectors/HR/DeltaT_vs_V/HR_DT_E_H2");
     obtitle.Form("HR_DT_E_H2");     
-    BB29_HR_DT_H2= MakeTH2('I', obname.Data(), obtitle.Data(), 100, 0,100, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V2");
+    BB29_HR_DT_H2= MakeTH2('I', obname.Data(), obtitle.Data(), 300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V2");
 
     obname.Form("Monitoring/Target_on/Detectors/HR/DeltaT_vs_V/HR_DT_E_H20");
     obtitle.Form("HR_DT_E_H20");     
-    BB29_HR_DT_H20= MakeTH2('I', obname.Data(), obtitle.Data(), 100, 0,100, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V60");
+    BB29_HR_DT_H20= MakeTH2('I', obname.Data(), obtitle.Data(), 300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V60");
     
     obname.Form("Monitoring/Target_on/Detectors/HR/DeltaT_vs_V/HR_DT_E_H21");
     obtitle.Form("HR_DT_E_H21");     
-    BB29_HR_DT_H21= MakeTH2('I', obname.Data(), obtitle.Data(), 100, 0,100, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V61");
+    BB29_HR_DT_H21= MakeTH2('I', obname.Data(), obtitle.Data(),300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V61");
 
     obname.Form("Monitoring/Target_on/Detectors/HR/DeltaT_vs_V/HR_DT_E_H39");
     obtitle.Form("HR_DT_E_H39");     
-    BB29_HR_DT_H39= MakeTH2('I', obname.Data(), obtitle.Data(), 100, 0,100, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V60");
+    BB29_HR_DT_H39= MakeTH2('I', obname.Data(), obtitle.Data(), 300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V60");
     
     obname.Form("Monitoring/Target_on/Detectors/HR/DeltaT_vs_V/HR_DT_E_H40");
     obtitle.Form("HR_DT_E_H40");     
-    BB29_HR_DT_H40= MakeTH2('I', obname.Data(), obtitle.Data(), 100, 0,100, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V61");
+    BB29_HR_DT_H40= MakeTH2('I', obname.Data(), obtitle.Data(), 300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V61");
     
     // Vertical vs vertical
     
@@ -319,7 +319,7 @@ void TNectarHistograms::InitHistograms(Bool_t replace)
     {
         obname.Form("Monitoring/Target_on/Detectors/FF_top/DeltaT_vs_V/FFtop_DT_E_V_%d",i+1);
         obtitle.Form("FFtop_DT_E_V_%d",i+1);  
-        BB36_FFtop_DT_E_V[i]= MakeTH2('I', obname.Data(), obtitle.Data(),100, 0,100, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DT (ch)", "ADC energy (ch)"); 
+        BB36_FFtop_DT_E_V[i]= MakeTH2('I', obname.Data(), obtitle.Data(),300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DT (ch)", "ADC energy (ch)"); 
     }
     
     // Control histograms strip 
@@ -355,7 +355,7 @@ void TNectarHistograms::InitHistograms(Bool_t replace)
     {
         obname.Form("Monitoring/Target_on/Detectors/FF_bot/DeltaT_vs_V/FFbot_DT_E_V_%d",i+1);
         obtitle.Form("FFbot_DT_E_V_%d",i+1);  
-        BB36_FFbot_DT_E_V[i]= MakeTH2('I', obname.Data(), obtitle.Data(),100, 0,100, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DT (ch)", "ADC value"); 
+        BB36_FFbot_DT_E_V[i]= MakeTH2('I', obname.Data(), obtitle.Data(),300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DT (ch)", "ADC value"); 
     }
 
     // Control histograms strip 
@@ -444,53 +444,53 @@ void TNectarHistograms::InitHistograms(Bool_t replace)
     
     obname.Form("Monitoring/Target_on/Detectors/FF_side/DeltaT_vs_V/FFside_DT_E_V1");
     obtitle.Form("FFside_DT_E_V1");     
-    BB29_FFside_DT_V1= MakeTH2('I', obname.Data(), obtitle.Data(),100, 0,100, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V1");
+    BB29_FFside_DT_V1= MakeTH2('I', obname.Data(), obtitle.Data(),300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V1");
     
     obname.Form("Monitoring/Target_on/Detectors/FF_side/DeltaT_vs_V/FFside_DT_E_V2");
     obtitle.Form("FFside_DT_E_V2");     
-    BB29_FFside_DT_V2= MakeTH2('I', obname.Data(), obtitle.Data(), 100, 0,100, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V2");
+    BB29_FFside_DT_V2= MakeTH2('I', obname.Data(), obtitle.Data(), 300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V2");
 
     obname.Form("Monitoring/Target_on/Detectors/FF_side/DeltaT_vs_V/FFside_DT_E_V60");
     obtitle.Form("FFside_DT_E_V60");     
-    BB29_FFside_DT_V60= MakeTH2('I', obname.Data(), obtitle.Data(), 100, 0,100, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V60");
+    BB29_FFside_DT_V60= MakeTH2('I', obname.Data(), obtitle.Data(), 300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V60");
     
     obname.Form("Monitoring/Target_on/Detectors/FF_side/DeltaT_vs_V/FFside_DT_E_V61");
     obtitle.Form("FFside_DT_E_V61");     
-    BB29_FFside_DT_V61= MakeTH2('I', obname.Data(), obtitle.Data(), 100, 0,100, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V61");
+    BB29_FFside_DT_V61= MakeTH2('I', obname.Data(), obtitle.Data(),300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V61");
 
     obname.Form("Monitoring/Target_on/Detectors/FF_side/DeltaT_vs_V/FFside_DT_E_V119");
     obtitle.Form("FFside_DT_E_V119");     
-    BB29_FFside_DT_V119= MakeTH2('I', obname.Data(), obtitle.Data(), 100, 0,100, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V119");
+    BB29_FFside_DT_V119= MakeTH2('I', obname.Data(), obtitle.Data(), 300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V119");
     
     obname.Form("Monitoring/Target_on/Detectors/FF_side/DeltaT_vs_V/FFside_DT_E_V120");
     obtitle.Form("FFside_DT_E_V120");     
-    BB29_FFside_DT_V120= MakeTH2('I', obname.Data(), obtitle.Data(), 100, 0,100, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V120");
+    BB29_FFside_DT_V120= MakeTH2('I', obname.Data(), obtitle.Data(), 300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V120");
     
     // DT vs horizontal ADC
     
     obname.Form("Monitoring/Target_on/Detectors/FF_side/DeltaT_vs_V/FFside_DT_E_H1");
     obtitle.Form("FFside_DT_E_H1");     
-    BB29_FFside_DT_H1= MakeTH2('I', obname.Data(), obtitle.Data(),100, 0,100, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V1");
+    BB29_FFside_DT_H1= MakeTH2('I', obname.Data(), obtitle.Data(),300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V1");
     
     obname.Form("Monitoring/Target_on/Detectors/FF_side/DeltaT_vs_V/FFside_DT_E_H2");
     obtitle.Form("FFside_DT_E_H2");     
-    BB29_FFside_DT_H2= MakeTH2('I', obname.Data(), obtitle.Data(), 100, 0,100, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V2");
+    BB29_FFside_DT_H2= MakeTH2('I', obname.Data(), obtitle.Data(), 300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V2");
 
     obname.Form("Monitoring/Target_on/Detectors/FF_side/DeltaT_vs_V/FFside_DT_E_H20");
     obtitle.Form("FFside_DT_E_H20");     
-    BB29_FFside_DT_H20= MakeTH2('I', obname.Data(), obtitle.Data(), 100, 0,100, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V60");
+    BB29_FFside_DT_H20= MakeTH2('I', obname.Data(), obtitle.Data(), 300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V60");
     
     obname.Form("Monitoring/Target_on/Detectors/FF_side/DeltaT_vs_V/FFside_DT_E_H21");
     obtitle.Form("FFside_DT_E_H21");     
-    BB29_FFside_DT_H21= MakeTH2('I', obname.Data(), obtitle.Data(), 100, 0,100, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V61");
+    BB29_FFside_DT_H21= MakeTH2('I', obname.Data(), obtitle.Data(), 300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V61");
 
     obname.Form("Monitoring/Target_on/Detectors/FF_side/DeltaT_vs_V/FFside_DT_E_H39");
     obtitle.Form("FFside_DT_E_H39");     
-    BB29_FFside_DT_H39= MakeTH2('I', obname.Data(), obtitle.Data(), 100, 0,100, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V60");
+    BB29_FFside_DT_H39= MakeTH2('I', obname.Data(), obtitle.Data(), 300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V60");
     
     obname.Form("Monitoring/Target_on/Detectors/FF_side/DeltaT_vs_V/FFside_DT_E_H40");
     obtitle.Form("FFside_DT_E_H40");     
-    BB29_FFside_DT_H40= MakeTH2('I', obname.Data(), obtitle.Data(), 100, 0,100, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V61");
+    BB29_FFside_DT_H40= MakeTH2('I', obname.Data(), obtitle.Data(),300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value V61");
     
     
     // Control histograms strip 
@@ -511,37 +511,52 @@ void TNectarHistograms::InitHistograms(Bool_t replace)
       
     obname.Form("Monitoring/Target_on/Detectors/DT_tel_vs_dets/DT_tel_vs_FFtop_V1");
     obtitle.Form("DT_tel_vs_FFtop_V1");     
-    DTtel_ADCFFtop_V1= MakeTH2('I', obname.Data(), obtitle.Data(), 100, 0,100, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value FF top VSTRIP1");
+    DTtel_ADCFFtop_V1= MakeTH2('I', obname.Data(), obtitle.Data(),300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value FF top VSTRIP1");
     
     obname.Form("Monitoring/Target_on/Detectors/DT_tel_vs_dets/DT_tel_vs_FFtop_V8");
     obtitle.Form("DT_tel_vs_FFtop_V8");     
-    DTtel_ADCFFtop_V8= MakeTH2('I', obname.Data(), obtitle.Data(), 100, 0,100, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value FF top VSTRIP8");
+    DTtel_ADCFFtop_V8= MakeTH2('I', obname.Data(), obtitle.Data(), 300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value FF top VSTRIP8");
     
     obname.Form("Monitoring/Target_on/Detectors/DT_tel_vs_dets/DT_tel_vs_FFbot_V1");
     obtitle.Form("DT_tel_vs_FFbot_V1");     
-    DTtel_ADCFFbot_V1= MakeTH2('I', obname.Data(), obtitle.Data(), 100, 0,100, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value FF bot VSTRIP1");
+    DTtel_ADCFFbot_V1= MakeTH2('I', obname.Data(), obtitle.Data(), 300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value FF bot VSTRIP1");
     
     obname.Form("Monitoring/Target_on/Detectors/DT_tel_vs_dets/DT_tel_vs_FFbot_V8");
     obtitle.Form("DT_tel_vs_FFbot_V8");     
-    DTtel_ADCFFbot_V8= MakeTH2('I', obname.Data(), obtitle.Data(), 100, 0,100, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value FF top VSTRIP1");
+    DTtel_ADCFFbot_V8= MakeTH2('I', obname.Data(), obtitle.Data(), 300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value FF top VSTRIP1");
     
     obname.Form("Monitoring/Target_on/Detectors/DT_tel_vs_dets/DT_tel_vs_FFside_V1");
     obtitle.Form("DT_tel_vs_FFside_V1");     
-    DTtel_ADCFFside_V1= MakeTH2('I', obname.Data(), obtitle.Data(), 100, 0,100, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value FF top VSTRIP1");
+    DTtel_ADCFFside_V1= MakeTH2('I', obname.Data(), obtitle.Data(), 300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value FF top VSTRIP1");
     
     obname.Form("Monitoring/Target_on/Detectors/DT_tel_vs_dets/DT_tel_vs_FFside_V60");
     obtitle.Form("DT_tel_vs_FFside_V60");     
-    DTtel_ADCFFside_V60= MakeTH2('I', obname.Data(), obtitle.Data(), 100, 0,100, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value FF top VSTRIP1");
+    DTtel_ADCFFside_V60= MakeTH2('I', obname.Data(), obtitle.Data(), 300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value FF top VSTRIP1");
     
     obname.Form("Monitoring/Target_on/Detectors/DT_tel_vs_dets/DT_tel_vs_FFside_H1");
     obtitle.Form("DT_tel_vs_FFside_H1");     
-    DTtel_ADCFFside_H1= MakeTH2('I', obname.Data(), obtitle.Data(), 100, 0,100, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value FF top VSTRIP1");
+    DTtel_ADCFFside_H1= MakeTH2('I', obname.Data(), obtitle.Data(), 300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value FF top VSTRIP1");
     
     obname.Form("Monitoring/Target_on/Detectors/DT_tel_vs_dets/DT_tel_vs_FFside_H20");
     obtitle.Form("DT_tel_vs_FFside_H20");     
-    DTtel_ADCFFside_H20= MakeTH2('I', obname.Data(), obtitle.Data(), 100, 0,100, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value FF top VSTRIP1");
+    DTtel_ADCFFside_H20= MakeTH2('I', obname.Data(), obtitle.Data(), 300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT (ch)", "ADC value FF top VSTRIP1");
     
-
+    obname.Form("Monitoring/Target_on/Detectors/DT_tel_vs_dets/DT_tel_vs_HR_V1");
+    obtitle.Form("DT_tel_vs_HR_V1");     
+    DTtel_ADCHR_V1= MakeTH2('I', obname.Data(), obtitle.Data(),300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT HR verticals(ch)", "ADC value telescope BB8 VSTRIP1");
+    
+    obname.Form("Monitoring/Target_on/Detectors/DT_tel_vs_dets/DT_tel_vs_HR_V60");
+    obtitle.Form("DT_tel_vs_HR_V60");     
+    DTtel_ADCHR_V60= MakeTH2('I', obname.Data(), obtitle.Data(),300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT HR verticals(ch)", "ADC value telescope BB8  VSTRIP8");
+    
+    obname.Form("Monitoring/Target_on/Detectors/DT_tel_vs_dets/DT_tel_vs_HR_H1");
+    obtitle.Form("DT_tel_vs_HR_H1");     
+    DTtel_ADCHR_H1= MakeTH2('I', obname.Data(), obtitle.Data(),300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT HR verticals(ch)", "ADC value telescope BB8   HSTRIP1");
+    
+    obname.Form("Monitoring/Target_on/Detectors/DT_tel_vs_dets/DT_tel_vs_HR_H20");
+    obtitle.Form("DT_tel_vs_HR_H20");     
+    DTtel_ADCHR_H20= MakeTH2('I', obname.Data(), obtitle.Data(),300, 0,300, VMMR_ADC_RANGE, 0, VMMR_ADC_RANGE ,"DeltaT HR verticals(ch)", "ADC value telescope BB8  HSTRIP8");
+    
      //******************** 
      //Init Delta Time Histograms
      //*******************

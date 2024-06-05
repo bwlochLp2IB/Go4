@@ -161,6 +161,11 @@ public:
   TH2 *DTtel_ADCFFside_H1;      // Delta time telescope vs energy (ch) for vertical strips FF side
   TH2 *DTtel_ADCFFside_H20;      // Delta time telescope vs energy (ch) for vertical strips FF side
   
+  TH2 *DTtel_ADCHR_V1;      // Delta time telescope vs energy (ch) for vertical strips FF side
+  TH2 *DTtel_ADCHR_V60;      // Delta time telescope vs energy (ch) for vertical strips FF side
+  TH2 *DTtel_ADCHR_H1;      // Delta time telescope vs energy (ch) for vertical strips FF side
+  TH2 *DTtel_ADCHR_H20;      // Delta time telescope vs energy (ch) for vertical strips FF side
+  
   
   /** Multiplicity Spectra   **/
   TH1 *h_Mult_BB8_V;
