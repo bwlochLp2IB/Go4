@@ -63,17 +63,24 @@ void set_NectarRawParam()
    param0->fMDPP_is16Channels[8] = kFALSE;
    param0->fMDPP_is16Channels[9] = kFALSE;
 
-   param0->BB8_H_threshold = 5;   //** Modified april 2024
-   param0->BB8_V_threshold = 5;
+   /*** THRESHOLD PARAMETERS**/
+   param0->BB8_H_threshold = 200;   //** Modified april 2024
+   param0->BB8_V_threshold = 200;
    param0->BB29_H_threshold = 200;
    param0->BB29_V_threshold = 200;
 
+   param0->BB36FF_H_threshold = 200;   
+   param0->BB36FF_V_threshold = 200;
+   param0->BB29FF_H_threshold = 200;
+   param0->BB29FF_V_threshold = 200;   
+
+
    param0->MSX04_1_threshold = 200;
    param0->MSX04_2_threshold = 200;
-   param0->MSX04_7_threshold = 200;
-   param0->MSX04_8_threshold = 200;
-   param0->MSX04_9_threshold = 200;
-   param0->MSX04_10_threshold = 200;
+   param0->MSX04_3_threshold = 200;
+   param0->MSX04_4_threshold = 200;
+   param0->MSX04_5_threshold = 200;
+   param0->MSX04_6_threshold = 200;
 
     
    param0->DT_min = 140; 
