@@ -99,7 +99,8 @@ protected:
 
    TH1* hRawTRLO_tpat;
    TH1* hRawTRLO_trigger;
-
+   TH1* h_tpat_mapped;
+  
    //TRLO timestamp and derived values
    uint64_t TRLO_TS;
    uint64_t TRLO_TS_start;
@@ -109,8 +110,6 @@ protected:
    uint64_t SCAoffset = 0;
 
    // mapped histos
-   TH1* h_trafo;
-   TH1* h_i_cooler;
    // xray
    TH1* h_E_Xray[3];
    TH1* h_t_Xray[3];
@@ -120,11 +119,14 @@ protected:
    // ESR scalers
    uint32_t V830_old[32] = {0};
    uint32_t V830_diff[32] = {0};
+   TH1* h_trafo;
    TH1* h_I_cooler;
    TH1* h_U_cooler;
+   TH1* h_injection;
+   TH1* h_pmt;
    TH1* h_jet_S1;
    TH1* h_jet_S2;
-   TH1* h_pmt;
+   
    
    // VULOM scaler raw JAM24:
 
@@ -138,18 +140,25 @@ protected:
    TH1* h_Tel_bdt;
    TH1* h_Tel_adt;
    TH1* h_Tel_ared;
+   TH1* h_Fis_blmu;
+   TH1* h_Fis_bdt;
+   TH1* h_Fis_adt;
+   TH1* h_Fis_ared;
    TH1* h_HRes_blmu;
    TH1* h_HRes_bdt;
    TH1* h_HRes_adt;
    TH1* h_HRes_ared;
+   TH1* h_Cells_blmu;
+   TH1* h_Cells_bdt;
+   TH1* h_Cells_adt;
+   TH1* h_Cells_ared;
    TH1* h_Xray1_blmu;
    TH1* h_Xray2_blmu;
-   TH1* h_Xray3_blmu;
    TH1* h_Xray_bdt;
    TH1* h_Xray_adt;
    TH1* h_Xray_ared;
 
-   uint32_t blmu_old[16] = {0};
+   uint32_t blmu_old[32] = {0};
    uint32_t bdt_old[16] = {0};
    uint32_t adt_old[16] = {0};
    uint32_t ared_old[16] = {0};

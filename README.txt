@@ -10,7 +10,6 @@
 // in Go4License.txt file which is part of the distribution.
 //-----------------------------------------------------------------------
 
-
 ---------------------------------------------
 // Display readout of MDPP and VMMR data  for Nectar setup
 // V 0.1 09-Sep-2021

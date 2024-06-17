@@ -18,8 +18,10 @@ void set_NectarRawParam()
 
    param0->fUseSetup2024=kTRUE; // JAM 5-2024: set this to kFALSE for processing old data with V830 and V785 modules
 
-   param0->fVMMR_BoardID[0] =  0; // this is board ID send by frontends
-   param0->fVMMR_BoardID[1] = 1; // -1 means no board is expected
+   //param0->fVMMR_BoardID[0] =  0; // this is board ID send by frontends
+   //param0->fVMMR_BoardID[1] = 1; // -1 means no board is expected
+   param0->fVMMR_BoardID[0] = -1; //  no VMMR 0
+   param0->fVMMR_BoardID[1] = -1; //  no VMMR 1
    param0->fVMMR_BoardID[2] = -1;
    param0->fVMMR_BoardID[3] = -1;
    param0->fVMMR_BoardID[4] = -1;
@@ -30,7 +32,8 @@ void set_NectarRawParam()
    param0->fVMMR_BoardID[9] = -1;
    
    
-   param0->fMDPP_BoardID[0] = 0; // this is board ID send by frontends
+   //param0->fMDPP_BoardID[0] = 0; // this is board ID send by frontends
+   param0->fMDPP_BoardID[0] = -1; // no MDPP 0
    param0->fMDPP_BoardID[1] = -1;
    param0->fMDPP_BoardID[2] = -1;
    param0->fMDPP_BoardID[3] = -1;
@@ -63,24 +66,17 @@ void set_NectarRawParam()
    param0->fMDPP_is16Channels[8] = kFALSE;
    param0->fMDPP_is16Channels[9] = kFALSE;
 
-   /*** THRESHOLD PARAMETERS**/
-   param0->BB8_H_threshold = 200;   //** Modified april 2024
-   param0->BB8_V_threshold = 200;
+   param0->BB8_H_threshold = 5;   //** Modified april 2024
+   param0->BB8_V_threshold = 5;
    param0->BB29_H_threshold = 200;
    param0->BB29_V_threshold = 200;
 
-   param0->BB36FF_H_threshold = 200;   
-   param0->BB36FF_V_threshold = 200;
-   param0->BB29FF_H_threshold = 200;
-   param0->BB29FF_V_threshold = 200;   
-
-
    param0->MSX04_1_threshold = 200;
    param0->MSX04_2_threshold = 200;
-   param0->MSX04_3_threshold = 200;
-   param0->MSX04_4_threshold = 200;
-   param0->MSX04_5_threshold = 200;
-   param0->MSX04_6_threshold = 200;
+   param0->MSX04_7_threshold = 200;
+   param0->MSX04_8_threshold = 200;
+   param0->MSX04_9_threshold = 200;
+   param0->MSX04_10_threshold = 200;
 
     
    param0->DT_min = 140; 

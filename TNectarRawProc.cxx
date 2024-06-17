@@ -1,8 +1,8 @@
-#define CAL_XRAY90_A 0.0425282
-#define CAL_XRAY90_B 0.0
+#define CAL_XRAY90_A 0.0278771
+#define CAL_XRAY90_B -2.94983
 
-#define CAL_XRAY145_A 0.037211
-#define CAL_XRAY145_B 0.0
+#define CAL_XRAY145_A 0.0287075
+#define CAL_XRAY145_B -3.64639
 
 
 #define SCALER_RANGE 14400  //Previous value defined by Jan Glorius 7200 //in seconds
@@ -138,7 +138,7 @@ TNectarRawProc::TNectarRawProc(const char* name) :
       obtitle.Form("Caen V775 TDC - Channel %d ", ch);
       hRawV775_TDC[ch] = MakeTH1('I',obname.Data(), obtitle.Data(), tdc_range, 0.5, tdc_range+0.5, "TDC value", "counts");
     }
-  ////V830 scaler histo definition
+  //V830 scaler histo definition
   //for(int ch=0;ch<32;ch++)
   //  {
   //    obname.Form("Raw/Scaler/V830_Channel_%d", ch);
@@ -186,29 +186,61 @@ TNectarRawProc::TNectarRawProc(const char* name) :
   h_t_Xray_OFF[2] = MakeTH1('I',"XRAY/t_Xray_145_OFF", "time Xray 145 degree - jet OFF",   tdc_range, 0.5, tdc_range+0.5, "TDC value", "counts");
 
   //beam scalers
-  h_trafo = MakeTH1('I',"ESR/trafo", "ESR beam trafo", 7200, 0, 7200,"test", "test" );
-  h_I_cooler = MakeTH1('I',"ESR/Icool", "ESR cooler current", scaler_range, 0, scaler_range, "time", "rate");
-  h_U_cooler = MakeTH1('I',"ESR/Ucool", "ESR cooler voltage", scaler_range, 0, scaler_range, "time", "rate");
-  h_jet_S1   = MakeTH1('I',"ESR/jetS1", "ESR target pressure S1", scaler_range, 0, scaler_range, "time", "rate");
-  h_jet_S2   = MakeTH1('I',"ESR/jetS2", "ESR target pressure S2", scaler_range, 0, scaler_range, "time", "rate");
-  h_pmt      = MakeTH1('I',"ESR/pmt", "ESR overlap PMT", scaler_range, 0, scaler_range, "time", "rate");
+  h_trafo = MakeTH1(   'I',"ESR/trafo", "ESR beam trafo"        , scaler_range, 0, scaler_range,"time [sec]", "freq [Hz]" );
+  h_I_cooler = MakeTH1('I',"ESR/Icool", "ESR cooler current"    , scaler_range, 0, scaler_range,"time [sec]", "freq [Hz]" );
+  h_U_cooler = MakeTH1('I',"ESR/Ucool", "ESR cooler voltage"    , scaler_range, 0, scaler_range,"time [sec]", "freq [Hz]" );
+  h_jet_S1   = MakeTH1('I',"ESR/jetS1", "ESR target pressure S1", scaler_range, 0, scaler_range,"time [sec]", "freq [Hz]" );
+  h_jet_S2   = MakeTH1('I',"ESR/jetS2", "ESR target pressure S2", scaler_range, 0, scaler_range,"time [sec]", "freq [Hz]" );
+  h_injection= MakeTH1('I',"ESR/injection"  , "ESR injection"   , scaler_range, 0, scaler_range,"time [sec]", "freq [Hz]" );
+  h_pmt      = MakeTH1('I',"ESR/overlap"    , "ESR overlap"     , scaler_range, 0, scaler_range,"time [sec]", "freq [Hz]" );
 
   //h_TRAFO->Fill(111.1,200);
-  
+
+  //TPAT mapped
+  h_tpat_mapped = MakeTH1('I',"TPAT", "TPAT", 32, 0.5, 32.5, "", "total events");
+  h_tpat_mapped->GetXaxis()->SetBinLabel(1,"Tel");
+  h_tpat_mapped->GetXaxis()->SetBinLabel(2,"Fis");
+  h_tpat_mapped->GetXaxis()->SetBinLabel(3,"F+T");
+  h_tpat_mapped->GetXaxis()->SetBinLabel(4,"HRes");
+  h_tpat_mapped->GetXaxis()->SetBinLabel(5,"HR+T");
+  h_tpat_mapped->GetXaxis()->SetBinLabel(6,"HR+F");
+  h_tpat_mapped->GetXaxis()->SetBinLabel(7,"HR+F+T");
+  h_tpat_mapped->GetXaxis()->SetBinLabel(8,"Cells");
+  h_tpat_mapped->GetXaxis()->SetBinLabel(9,"C+T");
+  h_tpat_mapped->GetXaxis()->SetBinLabel(10,"C+F");
+  h_tpat_mapped->GetXaxis()->SetBinLabel(11,"C+F+T");
+  h_tpat_mapped->GetXaxis()->SetBinLabel(12,"C+HR");
+  h_tpat_mapped->GetXaxis()->SetBinLabel(13,"C+HR+T");
+  h_tpat_mapped->GetXaxis()->SetBinLabel(14,"C+HR+F");
+  h_tpat_mapped->GetXaxis()->SetBinLabel(15,"C+HR+F+T");
+  h_tpat_mapped->GetXaxis()->SetBinLabel(16,"Xray");
+  h_tpat_mapped->GetXaxis()->SetBinLabel(32,"OFF OR");
+  h_tpat_mapped->LabelsOption("v");
+
   //TRLO scalers
   h_Tel_blmu = MakeTH1('I',"TRLO/Tel_bLMU", "Telescope before LMU", scaler_range, 0, scaler_range, "time", "rate");
   h_Tel_bdt =  MakeTH1('I',"TRLO/Tel_bDT",  "Telescope before DT" , scaler_range, 0, scaler_range, "time", "rate");
   h_Tel_adt =  MakeTH1('I',"TRLO/Tel_aDT",  "Telescope after DT"  , scaler_range, 0, scaler_range, "time", "rate");
   h_Tel_ared = MakeTH1('I',"TRLO/Tel_aRED", "Telescope after RED" , scaler_range, 0, scaler_range, "time", "rate");
-
+  
+  h_Tel_blmu = MakeTH1('I',"TRLO/Fis_bLMU", "Fission before LMU", scaler_range, 0, scaler_range, "time", "rate");
+  h_Tel_bdt =  MakeTH1('I',"TRLO/Fis_bDT",  "Fission before DT" , scaler_range, 0, scaler_range, "time", "rate");
+  h_Tel_adt =  MakeTH1('I',"TRLO/Fis_aDT",  "Fission after DT"  , scaler_range, 0, scaler_range, "time", "rate");
+  h_Tel_ared = MakeTH1('I',"TRLO/Fis_aRED", "Fission after RED" , scaler_range, 0, scaler_range, "time", "rate");
+  
   h_HRes_blmu = MakeTH1('I',"TRLO/HRes_bLMU", "HeavyRes. before LMU", scaler_range, 0, scaler_range, "time", "rate");
   h_HRes_bdt =  MakeTH1('I',"TRLO/HRes_bDT",  "HeavyRes. before DT" , scaler_range, 0, scaler_range, "time", "rate");
   h_HRes_adt =  MakeTH1('I',"TRLO/HRes_aDT",  "HeavyRes. after DT"  , scaler_range, 0, scaler_range, "time", "rate");
   h_HRes_ared = MakeTH1('I',"TRLO/HRes_aRED", "HeavyRes. after RED" , scaler_range, 0, scaler_range, "time", "rate");
 
+  h_Cells_blmu = MakeTH1('I',"TRLO/Cells_bLMU", "SolarCells before LMU", scaler_range, 0, scaler_range, "time", "rate");
+  h_Cells_bdt  = MakeTH1('I',"TRLO/Cells_bDT", "SolarCells before DT", scaler_range, 0, scaler_range, "time", "rate");
+  h_Cells_adt  = MakeTH1('I',"TRLO/Cells_aDT", "SolarCells after DT", scaler_range, 0, scaler_range, "time", "rate");
+  h_Cells_ared = MakeTH1('I',"TRLO/Cells_aRED", "SolarCells after RED", scaler_range, 0, scaler_range, "time", "rate");
+  
   h_Xray1_blmu = MakeTH1('I',"TRLO/Xray1_bLMU", "Xray1 before LMU", scaler_range, 0, scaler_range, "time", "rate");
   h_Xray2_blmu = MakeTH1('I',"TRLO/Xray2_bLMU", "Xray2 before LMU", scaler_range, 0, scaler_range, "time", "rate");
-  h_Xray3_blmu = MakeTH1('I',"TRLO/Xray3_bLMU", "Xray3 before LMU", scaler_range, 0, scaler_range, "time", "rate");
+  //h_Xray3_blmu = MakeTH1('I',"TRLO/Xray3_bLMU", "Xray3 before LMU", scaler_range, 0, scaler_range, "time", "rate");
   h_Xray_bdt =  MakeTH1('I',"TRLO/Xray_bDT",  "Xray before DT" , scaler_range, 0, scaler_range, "time", "rate");
   h_Xray_adt =  MakeTH1('I',"TRLO/Xray_aDT",  "Xray after DT"  , scaler_range, 0, scaler_range, "time", "rate");
   h_Xray_ared = MakeTH1('I',"TRLO/Xray_aRED", "Xray after RED" , scaler_range, 0, scaler_range, "time", "rate");
@@ -349,13 +381,13 @@ Bool_t TNectarRawProc::BuildEvent(TGo4EventElement *target)
       Bool_t isV830 = ((header >> 24) & 0xFF) == 0xE0;    //caen scaler v830
       Bool_t isTPAT = ((header >> 24) & 0xFF) == 0xcf;    //Vulom4 trloII tpat
       Bool_t isVSCA = ((header >> 24) & 0xFF) == 0xc7;    //Vulom4 trloII scalers
-      Bool_t isPLAINVSCA = ((header >> 24) & 0xFF) == 0xc1;    //Vulom4 trloII scalers
+      Bool_t isPLAINVSCA = ((header >> 24) & 0xFF) == 0xC1;    //Vulom4 32ch scalers
       //  JAM todo: use following heaeder info somewhere?
       //Int_t module_nr = (header >> 16) & 0xF;
       //Int_t firmware = header & 0xFFFF;
 
       //printf("header: %x filter2: %x\n", header, ((header >> 24) & 0xFF));
-      
+
       if (isVMMR)
       {
         if (!UnpackVmmr())
@@ -406,7 +438,7 @@ Bool_t TNectarRawProc::BuildEvent(TGo4EventElement *target)
       }
       else if (isVSCA)
       {
-        //std::cout << "VScaler header found!" << std::endl;
+        //std::cout << "TRLOii Scaler header found!" << std::endl;
         if (!UnpackVSCA(header))
         {
           NECTAR_SKIP_EVENT("Data error: unpacking of TRLLOII Scaler data failed! -  skip event\n");
@@ -423,7 +455,7 @@ Bool_t TNectarRawProc::BuildEvent(TGo4EventElement *target)
 
       else if (isMADC)
       {
-         //std::cout << "MADC header found!" << std::endl;
+        //std::cout << "MADC header found!" << std::endl;
         if (!UnpackMadc(triggertype))
         {
           NECTAR_SKIP_EVENT("Data error: unpacking of MADC data failed! -  skip event\n");
@@ -989,6 +1021,8 @@ Bool_t TNectarRawProc::UnpackV830()
       NECTAR_EVENT_CHECK_PDATA
     }
 
+  FillBeamScalers();
+  
   return kTRUE;
 }
 
@@ -1032,6 +1066,8 @@ Bool_t TNectarRawProc::UnpackTPAT(Int_t header)
       trig = (word & 0xf000000) >> 24;
       //std::cout << "----- tpat: " << tpat << " trig: " << trig << " -----" << std::endl;
       hRawTRLO_tpat->Fill(tpat);
+      if(tpat < 32) h_tpat_mapped->Fill(tpat);
+      else h_tpat_mapped->Fill(32);
       hRawTRLO_trigger->Fill(trig);
       NECTAR_EVENT_CHECK_PDATA
     }
@@ -1054,29 +1090,32 @@ Bool_t TNectarRawProc::UnpackVSCA(Int_t header)
   uint32_t d_blmu;	
   while (counter < b_lmu)
     {
-      counter++;
+      //counter++;
       before_lmu[counter] = *pData++;
 
       d_blmu = before_lmu[counter]-blmu_old[counter];
       if ( blmu_old[counter] > 0 && d_blmu > 0)
         {
-          //printf( "counter: %d\n", counter);
+          //printf( "blmu counter: %d\n", counter);
           switch (counter)
             {
-            case 1:
+            case 0:
               h_Tel_blmu->Fill(SCAtime, d_blmu);
               break;
-            case 2:
+            case 1:
+	      h_Fis_blmu->Fill(SCAtime, d_blmu);
+	      break;
+	    case 2:
               h_HRes_blmu->Fill(SCAtime, d_blmu);
               break;
             case 3:
-              h_Xray1_blmu->Fill(SCAtime, d_blmu);
+	      h_Cells_blmu->Fill(SCAtime, d_blmu);
               break;
             case 4:
-              h_Xray2_blmu->Fill(SCAtime, d_blmu);
+	      h_Xray1_blmu->Fill(SCAtime, d_blmu);
               break;
             case 5:
-              h_Xray3_blmu->Fill(SCAtime, d_blmu);
+              h_Xray2_blmu->Fill(SCAtime, d_blmu);
               break;
             default:
               break;
@@ -1084,7 +1123,9 @@ Bool_t TNectarRawProc::UnpackVSCA(Int_t header)
         }
       //printf("blmu_Data ch %d: %x\n",counter, before_lmu[counter]);
       blmu_old[counter] = before_lmu[counter];
+      counter++;
       NECTAR_EVENT_CHECK_PDATA
+
     }
   counter = 0;
   // JAM 5-24: just skip the non used trloii scalers, suppress warnings
@@ -1121,7 +1162,7 @@ Bool_t TNectarRawProc::UnpackVSCA(Int_t header)
   
   while (counter < a_lmu)
     {
-      counter++;
+      //counter++;
       before_dt[counter] = *pData++;
       after_dt[counter] = *pData++;
       after_red[counter] = *pData++;
@@ -1133,22 +1174,36 @@ Bool_t TNectarRawProc::UnpackVSCA(Int_t header)
           //printf( "counter: %d\n", counter);
           switch (counter)
             {
-            case 1:
-            case 4:
+            case 0:
+            case 5:
               //printf( "filling Tel");
               h_Tel_bdt->Fill(SCAtime, d_bdt);
               h_Tel_adt->Fill(SCAtime, d_adt);
               h_Tel_ared->Fill(SCAtime, d_ared);
               break;
-            case 2:
-            case 5:
+	    case 1:
+            case 6:
+              //printf( "filling Fis");
+              h_Fis_bdt->Fill(SCAtime, d_bdt);
+              h_Fis_adt->Fill(SCAtime, d_adt);
+              h_Fis_ared->Fill(SCAtime, d_ared);
+              break;
+	    case 2:
+            case 7:
               //printf( "filling HRes");
               h_HRes_bdt->Fill(SCAtime, d_bdt);
               h_HRes_adt->Fill(SCAtime, d_adt);
               h_HRes_ared->Fill(SCAtime, d_ared);
               break;
-            case 3:
-            case 6:
+	    case 3:
+            case 8:
+              //printf( "filling Cell");
+              h_Cells_bdt->Fill(SCAtime, d_bdt);
+              h_Cells_adt->Fill(SCAtime, d_adt);
+              h_Cells_ared->Fill(SCAtime, d_ared);
+              break;
+            case 4:
+            case 9:
               //printf( "filling Xray");
               h_Xray_bdt->Fill(SCAtime, d_bdt);
               h_Xray_adt->Fill(SCAtime, d_adt);
@@ -1161,6 +1216,7 @@ Bool_t TNectarRawProc::UnpackVSCA(Int_t header)
 	bdt_old[counter] = before_dt[counter];
 	adt_old[counter] = after_dt[counter];
 	ared_old[counter] = after_red[counter];
+	counter++;
 	NECTAR_EVENT_CHECK_PDATA
     }
 	
@@ -1188,6 +1244,8 @@ Bool_t TNectarRawProc::UnpackPlainVSCA()
     }
     NECTAR_EVENT_CHECK_PDATA
   }      // for
+
+  FillBeamScalers();
 
   return kTRUE;
 }
@@ -1247,7 +1305,7 @@ Bool_t TNectarRawProc::UnpackMadc(UShort_t triggertype)
             ch_val = MADC_RANGE;// -1;    //fill overflow bin if channel in overlow
           hRaw_MADC[channel]->Fill(ch_val);
         //////////////////
-        if (fPar->fUseSetup2024)
+	  if (1)//fPar->fUseSetup2024)
            {
              switch (channel)
              {
@@ -1336,20 +1394,25 @@ void TNectarRawProc::ResetScalers()
   h_HRes_bdt->Reset();
   h_HRes_adt->Reset();
   h_HRes_ared->Reset();
+  h_Cells_blmu->Reset();
+  h_Cells_bdt->Reset();
+  h_Cells_adt->Reset();
+  h_Cells_ared->Reset();
   h_Xray1_blmu->Reset();
   h_Xray2_blmu->Reset();
-  h_Xray3_blmu->Reset();
+  //h_Xray3_blmu->Reset();
   ScalerReset(h_Xray_bdt);
   ScalerReset(h_Xray_adt);
   ScalerReset(h_Xray_ared);
   ScalerReset(h_trafo);
+  ScalerReset(h_injection);
   h_I_cooler->Reset();
   h_U_cooler->Reset();
   h_jet_S1->Reset();
   h_jet_S2->Reset();
   h_pmt->Reset();
   
-  h_vulom_raw->Reset();
+  //h_vulom_raw->Reset();
 
 }
 
@@ -1362,12 +1425,16 @@ void TNectarRawProc::FillBeamScalers()
 	{
 	  switch (i)
 	    {
-	    case 0: h_trafo->Fill(SCAtime, V830_diff[i]);
-	    case 1: h_I_cooler->Fill(SCAtime, V830_diff[i]);
-	    case 2: h_U_cooler->Fill(SCAtime, V830_diff[i]);
-	    case 3: h_jet_S1->Fill(SCAtime, V830_diff[i]);
-	    case 4: h_jet_S2->Fill(SCAtime, V830_diff[i]);
-	    case 5: h_pmt->Fill(SCAtime, V830_diff[i]);
+	    case 0: h_trafo->Fill(SCAtime, V830_diff[i]); break;
+	    case 1: h_I_cooler->Fill(SCAtime, V830_diff[i]); break;
+	    case 2: h_U_cooler->Fill(SCAtime, V830_diff[i]); break;
+	    case 3: h_injection->Fill(SCAtime, V830_diff[i]); break;
+	    case 4: h_jet_S1->Fill(SCAtime, V830_diff[i]); break;
+	    case 5: h_jet_S2->Fill(SCAtime, V830_diff[i]); break;
+	    case 6: break; //jet ON tigger 
+	    case 7: break; //jet OFF trigger
+	    case 8: h_pmt->Fill(SCAtime, V830_diff[i]); break;
+
 	    }
 	}
     }

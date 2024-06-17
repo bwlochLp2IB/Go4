@@ -35,15 +35,9 @@ class TNectarRawParam : public TGo4Parameter {
       Double_t BB8_V_threshold;  //threshold - Vertical Strips BB8
       Double_t BB29_H_threshold; //threshold - Horizontal Strips BB29
       Double_t BB29_V_threshold; //threshold - Vertical Strips BB29
-      
-      Double_t BB36FF_H_threshold;  //threshold - Horizontal Strips BB36
-      Double_t BB36FF_V_threshold;  //threshold - Vertical Strips BB36
-      Double_t BB29FF_H_threshold; //threshold - Horizontal Strips BB29 FF
-      Double_t BB29FF_V_threshold; //threshold - Vertical Strips BB29
-      
       Double_t MSX04_1_threshold, MSX04_2_threshold;  //thershold - MSX04 
-      Double_t MSX04_3_threshold, MSX04_4_threshold;  //thershold - MSX04 
-      Double_t MSX04_5_threshold, MSX04_6_threshold;  //thershold - MSX04 
+      Double_t MSX04_7_threshold, MSX04_8_threshold;  //thershold - MSX04 
+      Double_t MSX04_9_threshold, MSX04_10_threshold;  //thershold - MSX04 
       
       Double_t DT_min, DT_max;  //Range - HR selection in DT	
 
