@@ -23,42 +23,52 @@ class TNectarDetectors : public TGo4EventElement {
    TNectarDetectors() : TGo4EventElement() {}
    TNectarDetectors( const char* name) : TGo4EventElement(name) {}
    virtual ~TNectarDetectors() {}
-   //* Telescope *//
-  Double_t BB8_VStrip[17];
-  Double_t BB8_HStrip[17];
-  Double_t BB8_V_Energy[17];
-  Double_t BB8_H_Energy[17]; 
-  Double_t ADC_MSX04_1;
-  Double_t ADC_MSX04_2;
-  Double_t ADC_MSX04_7;
-  Double_t ADC_MSX04_8;
-  Double_t ADC_MSX04_9;
-  Double_t ADC_MSX04_10;
-  Double_t DT_telescope;
-  
- //* Heavy residue *//  
-  Double_t BB29_VStrip[129];
-  Double_t BB29_HStrip[65];
-  Double_t DT_BB29_V;
-  Double_t DT_BB29_H;
+      
+    Int_t Trigger;  //trigger type
+      
+    //* Telescope *//
+    Double_t BB8_VStrip[17];
+    Double_t BB8_HStrip[17];
+    Double_t BB8_V_Energy[17];
+    Double_t BB8_H_Energy[17]; 
+    
+    Double_t ADC_MSX04_1;
+    Double_t ADC_MSX04_2;
+    Double_t ADC_MSX04_3;
+    Double_t ADC_MSX04_4;
+    Double_t ADC_MSX04_5;
+    Double_t ADC_MSX04_6;
+    Double_t Energy_MSX04_1;
+    Double_t Energy_MSX04_2;
+    Double_t Energy_MSX04_3;
+    Double_t Energy_MSX04_4;
+    Double_t Energy_MSX04_5;
+    Double_t Energy_MSX04_6;
+    
+    Double_t DT_telescope;
+    
+    //* Fission top *// 
+    Double_t BB36_top_VStrip[17];
+    Double_t BB36_top_HStrip[17];
+    Double_t DT_BB36_top; 
+    
+    //* Fission bottom *// 
+    Double_t BB36_bot_VStrip[17];
+    Double_t BB36_bot_HStrip[17];
+    Double_t DT_BB36_bot;
 
-   //* Fission top *// 
-  Double_t BB36_top_VStrip[17];
-  Double_t BB36_top_HStrip[17];
-  Double_t DT_BB36_top;
+    //* Fission side *//  
+    Double_t BB29_side_VStrip[129];
+    Double_t BB29_side_HStrip[65];
+    Double_t DT_BB29_side_V;
+    Double_t DT_BB29_side_H;
+        
+    //* Heavy residue *//  
+    Double_t BB29_VStrip[129];
+    Double_t BB29_HStrip[65];
+    Double_t DT_BB29_V;
+    Double_t DT_BB29_H;
 
-  //* Fission bottom *// 
-  Double_t BB36_bot_VStrip[17];
-  Double_t BB36_bot_HStrip[17];
-  Double_t DT_BB36_bot;
-
- //* Fission side *//  
-  Double_t BB29_side_VStrip[129];
-  Double_t BB29_side_HStrip[65];
-  Double_t DT_BB29_side_V;
-  Double_t DT_BB29_side_H;
-
-  Int_t Trigger;  //trigger type
 
   ClassDef(TNectarDetectors,1)
    };

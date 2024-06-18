@@ -50,7 +50,8 @@ protected:
   TNectarHistograms* Histo = new TNectarHistograms();
   TF1* SW_Correction = new TF1("SW_Correction","[0]+[1]*x+[2]*TMath::Power(x,2)+[3]*TMath::Power(x,3)+[4]*TMath::Power(x,4)",1,10);
   std::vector<TVmmrSlave*>fSlave;  
-  TGo4PolyCond  *fPolyCon1{nullptr};
+  TGo4PolyCond  *fPolyCon_protons{nullptr};
+  TGo4PolyCond  *fPolyCon_deuterons{nullptr};
 
    TNectarRawParam* fPar;
   
